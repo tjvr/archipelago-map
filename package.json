@@ -1,0 +1,30 @@
+{
+  "name": "svg-layer",
+  "dependencies": {
+    "ol": "6.5.0"
+  },
+  "devDependencies": {
+    "@parcel/optimizer-cssnano": "^2.0.0-nightly.602",
+    "@parcel/optimizer-htmlnano": "^2.0.0-nightly.602",
+    "@parcel/packager-css": "^2.0.0-nightly.602",
+    "@parcel/packager-html": "^2.0.0-nightly.602",
+    "@parcel/transformer-css": "^2.0.0-nightly.602",
+    "@parcel/transformer-html": "^2.0.0-nightly.602",
+    "@parcel/transformer-image": "^2.0.0-nightly.2224",
+    "@parcel/transformer-postcss": "^2.0.0-nightly.602",
+    "@parcel/transformer-posthtml": "^2.0.0-nightly.602",
+    "parcel": "^2.0.0-beta.1",
+    "postcss": "^8.2.6",
+    "prettier": "^2.2.1"
+  },
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build --public-url . index.html"
+  },
+  "prettier": {
+    "semi": false,
+    "trailingComma": "es5",
+    "printWidth": 100,
+    "tabWidth": 2
+  }
+}

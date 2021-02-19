@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>The Archipelago Series</title>
+    <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
+    <script src="https://unpkg.com/elm-pep"></script>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .svg-layer {
+        position: absolute;
+      }
+      .map {
+        width: 100%;
+        height: 100%;
+      }
+      #map {
+        background: black;
+      }
+      #dropdown {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 1.25em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <select id="dropdown"></select>
+    <script src="main.js"></script>
+  </body>
+</html>
