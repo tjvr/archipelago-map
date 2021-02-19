@@ -177,32 +177,32 @@ const map = new Map({
   layers: [railsLayer, citiesLayer],
   view,
 })
-window.map = map
 
-document.body.addEventListener("click", e => {
-  if (!e.shiftKey) return
-  const pixel = [e.clientX, e.clientY]
-  const name = prompt("name?")
-  const point = map.getCoordinateFromPixel(pixel)
+function enableEditing() {
+  document.body.addEventListener("click", e => {
+    if (!e.shiftKey) return
+    const pixel = [e.clientX, e.clientY]
+    const name = prompt("name?")
+    const point = map.getCoordinateFromPixel(pixel)
 
-  const f = new Feature({
-    geometry: new Point(point),
-    name,
+    const f = new Feature({
+      geometry: new Point(point),
+      name,
+    })
+    citiesSource.addFeature(f)
   })
-  citiesSource.addFeature(f)
-})
-window.citiesLayer = citiesLayer
 
-const modify = new Modify({
-  hitDetection: citiesLayer,
-  source: citiesSource,
-})
-modify.on(["modifystart", "modifyend"], function (evt) {
-  target.style.cursor = evt.type === "modifystart" ? "grabbing" : "pointer"
-})
-const overlaySource = modify.getOverlay().getSource()
-overlaySource.on(["addfeature", "removefeature"], function (evt) {
-  target.style.cursor = evt.type === "addfeature" ? "pointer" : ""
-})
+  const modify = new Modify({
+    hitDetection: citiesLayer,
+    source: citiesSource,
+  })
+  modify.on(["modifystart", "modifyend"], function (evt) {
+    target.style.cursor = evt.type === "modifystart" ? "grabbing" : "pointer"
+  })
+  const overlaySource = modify.getOverlay().getSource()
+  overlaySource.on(["addfeature", "removefeature"], function (evt) {
+    target.style.cursor = evt.type === "addfeature" ? "pointer" : ""
+  })
 
-map.addInteraction(modify)
+  map.addInteraction(modify)
+}
