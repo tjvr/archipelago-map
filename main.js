@@ -72,6 +72,7 @@ const destinations = [
   [[142.2725063392218, 21.569477653787416], "Framlingham"],
   [[-98.38437097739406, 149.56466684962083], "Frome"],
   [[25.46873141815521, -60.040627349051576], "Guisborough"],
+  [[116.56369740402104, 24.658056117689995], "Halewood"],
   [[-50.698153259459815, -40.493801791797885], "Harrogate"],
   [[72.14815115121992, 94.53149831677493], "Hartlepool"],
   [[83.61204017968834, 61.60937866088331], "Haverhill"],
@@ -105,13 +106,6 @@ const destinations = [
   [[46.73666803195333, 85.53834677230032], "Wakefield"],
   [[-62.16492416908189, 43.07410063146696], "Wooler"],
 ]
-
-setInterval(() => {
-  localStorage.features = JSON.stringify(
-    citiesSource.getFeatures().map(f => [f.getGeometry().getCoordinates(), f.get("name")])
-  )
-  console.log(localStorage.features)
-}, 1000)
 
 const features = destinations.map(
   ([[x, y], name]) =>
@@ -178,7 +172,7 @@ const map = new Map({
   view,
 })
 
-function enableEditing() {
+window.enableEditing = () => {
   document.body.addEventListener("click", e => {
     if (!e.shiftKey) return
     const pixel = [e.clientX, e.clientY]
@@ -205,4 +199,11 @@ function enableEditing() {
   })
 
   map.addInteraction(modify)
+
+  setInterval(() => {
+    localStorage.features = JSON.stringify(
+      citiesSource.getFeatures().map(f => [f.getGeometry().getCoordinates(), f.get("name")])
+    )
+    console.log(localStorage.features)
+  }, 1000)
 }
