@@ -3,6 +3,7 @@ rails.svg: rails.pdf
 	# Convert that PDF page to SVG.
 	# _INKSCAPE_GC makes Inkscape work under WSL.
 	_INKSCAPE_GC=disable inkscape --without-gui --file=$< --export-plain-svg=$@
+	node_modules/.bin/svgo $@
 
 rails.pdf: source.pdf
 	# Get the third page of the PDF. 
