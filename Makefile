@@ -7,7 +7,7 @@ rails.svg: rails.pdf
 
 rails.pdf: source.pdf
 	# Get the third page of the PDF. 
-	pdftk $< cat 3 output $@
+	pdftk $< cat 4 output $@
 
 source.pdf:
 	curl -L https://www.dropbox.com/s/hzwcw17v6xv13iz/TheArchipelagoMap.pdf > $@
