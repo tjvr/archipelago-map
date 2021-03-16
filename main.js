@@ -12,6 +12,8 @@ import TileLayer from "ol/layer/Tile"
 import XYZ from 'ol/source/XYZ'
 import { Modify } from "ol/interaction"
 
+const groundOpacity = 0.3
+
 const groundLayer = new TileLayer({
   source: new XYZ({
     url: './ground/{z}/{x}/{y}.jpg',
@@ -20,7 +22,7 @@ const groundLayer = new TileLayer({
     // transition and opacity like to fight
     transition: 0,
   }),
-  opacity: 0.33,
+  opacity: groundOpacity,
 })
 
 const railsLayer = new TileLayer({
@@ -164,7 +166,7 @@ const map = new Map({
 const updateLayers = () => {
   railsLayer.setVisible(railsCheckbox.checked)
   groundLayer.setVisible(groundCheckbox.checked)
-  groundLayer.setOpacity(railsCheckbox.checked ? 0.33 : 1)
+  groundLayer.setOpacity(railsCheckbox.checked ? groundOpacity : 1)
 }
 
 const restoreState = () => {
