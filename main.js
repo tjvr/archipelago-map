@@ -21,6 +21,7 @@ const groundLayer = new TileLayer({
     maxZoom: 5,
     // transition and opacity like to fight
     transition: 0,
+    wrapX: false,
   }),
   opacity: groundOpacity,
 })
@@ -32,6 +33,7 @@ const railsLayer = new TileLayer({
     maxZoom: 6,
     // We want transparency
     transition: 0,
+    wrapX: false,
   })
 })
 
@@ -116,6 +118,7 @@ const fillStyle = new Style({})
 
 const citiesSource = new VectorSource({
   features,
+  wrapX: false,
 })
 const citiesLayer = new VectorLayer({
   source: citiesSource,
