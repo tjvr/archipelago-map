@@ -26,7 +26,7 @@ source.pdf:
 	curl -L https://www.dropbox.com/s/hzwcw17v6xv13iz/TheArchipelagoMap.pdf > $@
 
 clean:
-	rm -f source.pdf rails.pdf rails.svg ground.ppm ground.pdf
+	rm -f source.pdf rails.ppm ground.ppm
 .PHONY: clean all
 
 #nope:
