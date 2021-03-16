@@ -160,6 +160,28 @@ const map = new Map({
   view,
 })
 
+const restoreState = () => {
+  const m = /\@(-?[0-9.]+),(-?[0-9.]+),([0-9.]+)z$/.exec(location)
+  if (!m) return false
+  const x = +m[1]
+  const y = +m[2]
+  const z = +m[3]
+  if (isNaN(x) || isNaN(y) || isNaN(z)) return false
+  view.setCenter([x * featureScale, y * featureScale])
+  view.setZoom(z)
+  return true
+}
+
+map.on('moveend', () => {
+  const center = view.getCenter()
+  const zoom = view.getZoom()
+  const x = (center[0]/featureScale)
+  const y = (center[1]/featureScale)
+  window.history.replaceState({}, '', `@${x.toFixed(2)},${y.toFixed(2)},${zoom.toFixed(2)}z`)
+})
+
+restoreState()
+
 window.enableEditing = () => {
   document.body.addEventListener("click", e => {
     if (!e.shiftKey) return
