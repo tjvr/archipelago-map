@@ -17,6 +17,7 @@ const groundLayer = new TileLayer({
     url: './ground/{z}/{x}/{y}.jpg',
     minZoom: 0,
     maxZoom: 5,
+    // transition and opacity like to fight
     transition: 0,
   }),
   opacity: 0.33,
@@ -27,7 +28,7 @@ const railsLayer = new TileLayer({
     url: './rails/{z}/{x}/{y}.png',
     minZoom: 0,
     maxZoom: 5,
-    // Enable transparency?
+    // We want transparency
     transition: 0,
   })
 })
@@ -147,11 +148,9 @@ const target = document.getElementById("map")
 
 const view = new View({
   center: [0, 0],
-  //extent: [-8400, -8400, 8400, 8400],
-  //extent: [-240, -240, 240, 240],
+  minZoom: 0,
   zoom: 0,
-  //zoom: 17,
-    maxZoom: 6,
+  maxZoom: 6,
 })
 
 const map = new Map({
