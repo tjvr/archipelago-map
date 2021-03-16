@@ -1,27 +1,35 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
+import sys
 import shutil
 
-from PIL import Image
+import pyvips
 
+src_filename = sys.argv[1]
+dst_path = sys.argv[2]
+assert dst_path.replace(".", "").replace("/", "")
 
+base = pyvips.Image.new_from_file(src_filename)
+assert base.width == base.height
 
-base = Image.open('ground.ppm')
-base.width
+# 6 zoom levels gives us a max zoom of 2^5 which is 32x32 tiles which is
+# 8400/32 = 262.5-wide tiles which is roughly 256, so our highest zoom level is
+# roughly 1:1 with the original source.
+assert base.width = 8400
 
-dest = Path('./tiles')
-if dest.exists():
-    shutil.rmtree(dest)
-dest.mkdir()
+dst = Path(dst_path)
+if dst.exists():
+    shutil.rmtree(dst)
+dst.mkdir()
 
-for zoom in range(5):
-    z_dir = dest / str(zoom)
+for zoom in range(6):
+    z_dir = dst / str(zoom)
     z_dir.mkdir()
 
     # A single tile is replaced by 4 tiles when zooming in.
     rows = pow(2, zoom)
-    size = 8400/rows
+    size = base.width / rows
 
     for x in range(rows):
         x_dir = z_dir / str(x)
@@ -34,7 +42,10 @@ for zoom in range(5):
             right = x * (size + 1)
             top = y * size
             bottom = y * (size + 1)
-            tile = base.crop((left, top, right, bottom)).resize((256, 256))
-            base.save(y_path) 
+            tile = (base
+                .crop(left, top, size, size)
+                .thumbnail_image(256)
+            )
+            tile.write_to_file(str(y_path))
             print(y_path)
 
