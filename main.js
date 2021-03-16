@@ -125,7 +125,8 @@ const citiesLayer = new VectorLayer({
 })
 
 const dropdown = document.getElementById("dropdown")
-document.body.appendChild(dropdown)
+const railsCheckbox = document.getElementById("rails")
+const groundCheckbox = document.getElementById("ground")
 
 for (let [[x, y], name] of destinations) {
   const option = document.createElement("option")
@@ -160,27 +161,51 @@ const map = new Map({
   view,
 })
 
+const updateLayers = () => {
+  railsLayer.setVisible(railsCheckbox.checked)
+  groundLayer.setVisible(groundCheckbox.checked)
+  groundLayer.setOpacity(railsCheckbox.checked ? 0.33 : 1)
+}
+
 const restoreState = () => {
-  const m = /\@(-?[0-9.]+),(-?[0-9.]+),([0-9.]+)z$/.exec(location)
+  const m = /\@(-?[0-9.]+),(-?[0-9.]+),([0-9.]+)z#(.*)$/.exec(location)
   if (!m) return false
   const x = +m[1]
   const y = +m[2]
   const z = +m[3]
+  const layers = m[4].split(",")
   if (isNaN(x) || isNaN(y) || isNaN(z)) return false
   view.setCenter([x * featureScale, y * featureScale])
   view.setZoom(z)
+  railsCheckbox.checked =  layers.find(x => x == "rails")
+  groundCheckbox.checked =  layers.find(x => x == "ground")
+  updateLayers()
   return true
 }
 
-map.on('moveend', () => {
+const saveState = () => {
   const center = view.getCenter()
   const zoom = view.getZoom()
   const x = (center[0]/featureScale)
   const y = (center[1]/featureScale)
-  window.history.replaceState({}, '', `@${x.toFixed(2)},${y.toFixed(2)},${zoom.toFixed(2)}z`)
-})
+  const layerIDs = []
+  if (groundLayer.getVisible()) layerIDs.push('ground')
+  if (railsLayer.getVisible()) layerIDs.push('rails')
+  window.history.replaceState({}, '', `@${x.toFixed(2)},${y.toFixed(2)},${zoom.toFixed(2)}z#${layerIDs.join(',')}`)
+}
 
-restoreState()
+if (!restoreState()) {
+  window.history.replaceState({}, '', '')
+}
+
+const onCheck = () => {
+  updateLayers()
+  saveState()
+}
+
+map.on('moveend', saveState)
+railsCheckbox.addEventListener("change", e => onCheck())
+groundCheckbox.addEventListener("change", e => onCheck())
 
 window.enableEditing = () => {
   document.body.addEventListener("click", e => {

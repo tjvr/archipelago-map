@@ -22,17 +22,31 @@
       #map {
         background: black;
       }
-      #dropdown {
+      form {
         position: absolute;
         top: 0;
         right: 0;
+        background: rgba(255,255,255,0.5);
+      }
+      select, input {
         font-size: 1.25em;
+      }
+      label {
+        cursor: pointer;
+        line-height: 2em;
+        display: inline-block;
+        padding-right: 0.5em;
       }
     </style>
   </head>
   <body>
     <div id="map" class="map"></div>
-    <select id="dropdown" tabindex="1"></select>
+    <form><select id="dropdown" tabindex="1">
+    </select><label for="rails">
+      <input type="checkbox" id="rails" checked />Lines
+    </label><label for="ground">
+      <input type="checkbox" id="ground" checked />Satellite
+    </label></form>
     <script src="main.js"></script>
   </body>
 </html>
