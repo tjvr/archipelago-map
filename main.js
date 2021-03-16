@@ -8,46 +8,28 @@ import { composeCssTransform } from "ol/transform"
 import { Icon, Fill, Stroke, Style, Text } from "ol/style"
 import VectorLayer from "ol/layer/Vector"
 import VectorSource from "ol/source/Vector"
+import TileLayer from "ol/layer/Tile"
+import XYZ from 'ol/source/XYZ'
 import { Modify } from "ol/interaction"
 
-import railsURL from "url:./data/rails.svg"
-
-var svgContainer = document.createElement("div")
-var xhr = new XMLHttpRequest()
-xhr.open("GET", railsURL)
-xhr.addEventListener("load", function () {
-  var svg = xhr.responseXML.documentElement
-  svgContainer.ownerDocument.importNode(svg)
-  svgContainer.appendChild(svg)
+const groundLayer = new TileLayer({
+  source: new XYZ({
+    url: './ground/{z}/{x}/{y}.jpg',
+    minZoom: 0,
+    maxZoom: 5,
+    transition: 0,
+  }),
+  opacity: 0.33,
 })
-xhr.send()
 
-var width = 5376
-var height = 5376
-var svgResolution = 360 / width
-svgContainer.style.width = width + "px"
-svgContainer.style.height = height + "px"
-svgContainer.style.transformOrigin = "top left"
-svgContainer.className = "svg-layer"
-
-const railsLayer = new Layer({
-  render: function (frameState) {
-    var scale = svgResolution / frameState.viewState.resolution
-    var center = frameState.viewState.center
-    var size = frameState.size
-    var cssTransform = composeCssTransform(
-      size[0] / 2,
-      size[1] / 2,
-      scale,
-      scale,
-      frameState.viewState.rotation,
-      -center[0] / svgResolution - width / 2,
-      center[1] / svgResolution - height / 2
-    )
-    svgContainer.style.transform = cssTransform
-    svgContainer.style.opacity = this.getOpacity()
-    return svgContainer
-  },
+const railsLayer = new TileLayer({
+  source: new XYZ({
+    url: './rails/{z}/{x}/{y}.png',
+    minZoom: 0,
+    maxZoom: 5,
+    // Enable transparency?
+    transition: 0,
+  })
 })
 
 const destinations = [
@@ -63,7 +45,7 @@ const destinations = [
   [[-4.375109938366542, -36.608174112460496], "Corby"],
   [[34.81861666819915, 133.13799840421567], "Crowle"],
   [[-21.903996406719976, 122.99739846972537], "Dorchester"],
-  [[-26.46271076585097, -99.85895607850966], "Driotwich Spa"],
+  [[-26.46271076585097, -99.85895607850966], "Droitwich Spa"],
   [[157.0856229019735, -90.10174521099111], "Ellesmere"],
   [[-88.45506970598368, -5.631785917174703], "Elliotsburgh"],
   [[23.851044424243405, -89.76469493657234], "Ely"],
@@ -107,10 +89,12 @@ const destinations = [
   [[-62.16492416908189, 43.07410063146696], "Wooler"],
 ]
 
+const featureScale = 112000
+
 const features = destinations.map(
   ([[x, y], name]) =>
     new Feature({
-      geometry: new Point([x, y]),
+      geometry: new Point([x * featureScale, y * featureScale]),
       name,
     })
 )
@@ -151,24 +135,28 @@ for (let [[x, y], name] of destinations) {
 
 dropdown.addEventListener("change", e => {
   const [x, y] = dropdown.value.split(",")
-  console.log(x, y)
-  view.setZoom(21)
+  view.setZoom(5)
   const size = map.getSize()
   const [width, height] = size
-  view.centerOn([x, y], size, [width / 2, height / 2])
+  view.centerOn([x * featureScale, y * featureScale], size, [width / 2, height / 2])
 })
+
+dropdown.focus()
 
 const target = document.getElementById("map")
 
 const view = new View({
   center: [0, 0],
-  extent: [-240, -240, 240, 240],
-  zoom: 13,
+  //extent: [-8400, -8400, 8400, 8400],
+  //extent: [-240, -240, 240, 240],
+  zoom: 0,
+  //zoom: 17,
+    maxZoom: 6,
 })
 
 const map = new Map({
   target,
-  layers: [railsLayer, citiesLayer],
+  layers: [groundLayer, railsLayer, citiesLayer], //, citiesLayer],
   view,
 })
 

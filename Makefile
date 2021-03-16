@@ -1,4 +1,4 @@
-all: rails.svg tiles
+all: static/ground static/rails
 
 rails.svg: rails.pdf
 	# Convert that PDF page to SVG.
@@ -10,15 +10,17 @@ rails.pdf: source.pdf
 	# Get the fourth page of the PDF.
 	pdftk $< cat 4 output $@
 
-tiles: ground.ppm
-	./tiles.py $< $@
+static/rails: rails.ppm
+	./tiles.py $< $@ .png
 
-ground.ppm: ground.pdf
-	pdftoppm -singlefile $< > $@
+static/ground: ground.ppm
+	./tiles.py $< $@ .jpg
 
-ground.pdf: source.pdf
-	# Get the fifth page of the PDF.
-	pdftk $< cat 5 output $@
+rails.ppm: source.pdf
+	pdftoppm -f 4 -singlefile $< > $@
+
+ground.ppm: source.pdf
+	pdftoppm -f 5 -singlefile $< > $@
 
 source.pdf:
 	curl -L https://www.dropbox.com/s/hzwcw17v6xv13iz/TheArchipelagoMap.pdf > $@
@@ -30,3 +32,4 @@ clean:
 #nope:
 	#convert -crop 840x840 $< -set filename:tile "tile-%[fx:page.x]-%[fx:page.y]" "$@/%[filename:tile].jpg" 
 
+	#pdftocairo -f 4 -transp -png -singlefile $< rails
