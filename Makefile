@@ -17,7 +17,7 @@ static/ground: ground.ppm
 	./tiles.py $< $@ .jpg
 
 rails.ppm: source.pdf
-	pdftoppm -f 4 -singlefile $< > $@
+	pdftoppm -f 4 -r 300 -singlefile $< > $@
 
 ground.ppm: source.pdf
 	pdftoppm -f 5 -singlefile $< > $@

@@ -27,7 +27,7 @@ const railsLayer = new TileLayer({
   source: new XYZ({
     url: './rails/{z}/{x}/{y}.png',
     minZoom: 0,
-    maxZoom: 5,
+    maxZoom: 6,
     // We want transparency
     transition: 0,
   })
