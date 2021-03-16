@@ -170,7 +170,7 @@ const updateLayers = () => {
 }
 
 const restoreState = () => {
-  const m = /\@(-?[0-9.]+),(-?[0-9.]+),([0-9.]+)z#(.*)$/.exec(location)
+  const m = /#?\@(-?[0-9.]+),(-?[0-9.]+),([0-9.]+)z,(.*)$/.exec(location.hash)
   if (!m) return false
   const x = +m[1]
   const y = +m[2]
@@ -193,12 +193,19 @@ const saveState = () => {
   const layerIDs = []
   if (groundLayer.getVisible()) layerIDs.push('ground')
   if (railsLayer.getVisible()) layerIDs.push('rails')
-  window.history.replaceState({}, '', `@${x.toFixed(2)},${y.toFixed(2)},${zoom.toFixed(2)}z#${layerIDs.join(',')}`)
+  window.history.replaceState({}, '', `#@${x.toFixed(2)},${y.toFixed(2)},${zoom.toFixed(2)}z,${layerIDs.join(',')}`)
 }
 
+railsCheckbox.checked = true
+groundCheckbox.checked = true
 if (!restoreState()) {
-  window.history.replaceState({}, '', '')
+    saveState()
 }
+window.addEventListener('hashchange', e => {
+  if (!restoreState()) {
+    saveState()
+  }
+})
 
 const onCheck = () => {
   updateLayers()
