@@ -151,6 +151,7 @@ const view = new View({
   minZoom: 0,
   zoom: 0,
   maxZoom: 6,
+  enableRotation: false,
 })
 
 const map = new Map({
