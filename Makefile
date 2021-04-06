@@ -1,20 +1,20 @@
-all: static/ground static/rails
-
-rails.svg: rails.pdf
-	# Convert that PDF page to SVG.
-	# _INKSCAPE_GC makes Inkscape work under WSL.
-	_INKSCAPE_GC=disable inkscape --without-gui --file=$< --export-plain-svg=$@
-	node_modules/.bin/svgo $@
+all: static/ground static/rails static/freight
 
 rails.pdf: source.pdf
 	# Get the fourth page of the PDF.
 	pdftk $< cat 4 output $@
+
+static/freight: freight.ppm
+	./tiles.py $< $@ .png
 
 static/rails: rails.ppm
 	./tiles.py $< $@ .png
 
 static/ground: ground.ppm
 	./tiles.py $< $@ .jpg
+
+freight.ppm: src/freightnobackground.pdf
+	pdftoppm -singlefile $< > $@
 
 rails.ppm: source.pdf
 	pdftoppm -f 4 -r 300 -singlefile $< > $@

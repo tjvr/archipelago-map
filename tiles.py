@@ -16,7 +16,7 @@ base = pyvips.Image.new_from_file(src_filename)
 assert base.width == base.height
 
 # If we're rendering rail tiles, we want a transparent background.
-if 'rail' in dst_path:
+if '.png' == ext:
     # Add an alpha channel, based on a grayscale copy of the image.
     alpha = base.colourspace('b-w')
     alpha = alpha + alpha.gaussblur(2)
@@ -24,6 +24,7 @@ if 'rail' in dst_path:
     # Render the image, so we don't re-run these operations for each tile.
     base = base.copy_memory()
 
+if 'rails' in dst_path:
     max_zoom = 6
     assert base.width == 16800
 else:

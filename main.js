@@ -9,14 +9,14 @@ import { Icon, Fill, Stroke, Style, Text } from "ol/style"
 import VectorLayer from "ol/layer/Vector"
 import VectorSource from "ol/source/Vector"
 import TileLayer from "ol/layer/Tile"
-import XYZ from 'ol/source/XYZ'
+import XYZ from "ol/source/XYZ"
 import { Modify } from "ol/interaction"
 
 const groundOpacity = 0.3
 
 const groundLayer = new TileLayer({
   source: new XYZ({
-    url: './ground/{z}/{x}/{y}.jpg',
+    url: "./ground/{z}/{x}/{y}.jpg",
     minZoom: 0,
     maxZoom: 5,
     // transition and opacity like to fight
@@ -28,13 +28,26 @@ const groundLayer = new TileLayer({
 
 const railsLayer = new TileLayer({
   source: new XYZ({
-    url: './rails/{z}/{x}/{y}.png',
+    url: "./rails/{z}/{x}/{y}.png",
     minZoom: 0,
     maxZoom: 6,
     // We want transparency
     transition: 0,
     wrapX: false,
-  })
+  }),
+})
+
+const freightLayer = new TileLayer({
+  source: new XYZ({
+    url: "./freight/{z}/{x}/{y}.png",
+    minZoom: 0,
+    maxZoom: 5,
+    // We want transparency
+    transition: 0,
+    wrapX: false,
+  }),
+  opacity: 0.8,
+  visible: false,
 })
 
 const destinations = [
@@ -132,6 +145,7 @@ const citiesLayer = new VectorLayer({
 const dropdown = document.getElementById("dropdown")
 const railsCheckbox = document.getElementById("rails")
 const groundCheckbox = document.getElementById("ground")
+const freightCheckbox = document.getElementById("freight")
 
 for (let [[x, y], name] of destinations) {
   const option = document.createElement("option")
@@ -162,14 +176,15 @@ const view = new View({
 
 const map = new Map({
   target,
-  layers: [groundLayer, railsLayer, citiesLayer], //, citiesLayer],
+  layers: [groundLayer, freightLayer, railsLayer, citiesLayer], //, citiesLayer],
   view,
 })
 
 const updateLayers = () => {
   railsLayer.setVisible(railsCheckbox.checked)
   groundLayer.setVisible(groundCheckbox.checked)
-  groundLayer.setOpacity(railsCheckbox.checked ? groundOpacity : 1)
+  freightLayer.setVisible(freightCheckbox.checked)
+  groundLayer.setOpacity(railsCheckbox.checked || freightCheckbox.checked ? groundOpacity : 1)
 }
 
 const restoreState = () => {
@@ -182,8 +197,9 @@ const restoreState = () => {
   if (isNaN(x) || isNaN(y) || isNaN(z)) return false
   view.setCenter([x * featureScale, y * featureScale])
   view.setZoom(z)
-  railsCheckbox.checked =  layers.find(x => x == "rails")
-  groundCheckbox.checked =  layers.find(x => x == "ground")
+  railsCheckbox.checked = layers.find(x => x == "rails")
+  groundCheckbox.checked = layers.find(x => x == "ground")
+  freightCheckbox.checked = layers.find(x => x == "freight")
   updateLayers()
   return true
 }
@@ -191,20 +207,26 @@ const restoreState = () => {
 const saveState = () => {
   const center = view.getCenter()
   const zoom = view.getZoom()
-  const x = (center[0]/featureScale)
-  const y = (center[1]/featureScale)
+  const x = center[0] / featureScale
+  const y = center[1] / featureScale
   const layerIDs = []
-  if (groundLayer.getVisible()) layerIDs.push('ground')
-  if (railsLayer.getVisible()) layerIDs.push('rails')
-  window.history.replaceState({}, '', `#@${x.toFixed(2)},${y.toFixed(2)},${zoom.toFixed(2)}z,${layerIDs.join(',')}`)
+  if (groundLayer.getVisible()) layerIDs.push("ground")
+  if (railsLayer.getVisible()) layerIDs.push("rails")
+  if (freightLayer.getVisible()) layerIDs.push("freight")
+  window.history.replaceState(
+    {},
+    "",
+    `#@${x.toFixed(2)},${y.toFixed(2)},${zoom.toFixed(2)}z,${layerIDs.join(",")}`
+  )
 }
 
 railsCheckbox.checked = true
 groundCheckbox.checked = true
+freightCheckbox.checked = true
 if (!restoreState()) {
-    saveState()
+  saveState()
 }
-window.addEventListener('hashchange', e => {
+window.addEventListener("hashchange", e => {
   if (!restoreState()) {
     saveState()
   }
@@ -215,9 +237,10 @@ const onCheck = () => {
   saveState()
 }
 
-map.on('moveend', saveState)
+map.on("moveend", saveState)
 railsCheckbox.addEventListener("change", e => onCheck())
 groundCheckbox.addEventListener("change", e => onCheck())
+freightCheckbox.addEventListener("change", e => onCheck())
 
 window.enableEditing = () => {
   document.body.addEventListener("click", e => {
