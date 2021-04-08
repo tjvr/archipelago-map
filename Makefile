@@ -17,13 +17,13 @@ freight.ppm: src/freightnobackground.pdf
 	pdftoppm -singlefile $< > $@
 
 rails.ppm: source.pdf
-	pdftoppm -f 4 -r 300 -singlefile $< > $@
+	pdftoppm -f 1 -r 300 -singlefile $< > $@
 
 ground.ppm: source.pdf
-	pdftoppm -f 5 -singlefile $< > $@
+	pdftoppm -f 3 -singlefile $< > $@
 
 source.pdf:
-	curl -L https://www.dropbox.com/s/hzwcw17v6xv13iz/TheArchipelagoMap.pdf > $@
+	curl -L https://www.dropbox.com/s/uccbzj05ouy4p6w/mapupdates.pdf > $@
 
 clean:
 	rm -f source.pdf rails.ppm ground.ppm
