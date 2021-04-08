@@ -242,6 +242,10 @@ railsCheckbox.addEventListener("change", e => onCheck())
 groundCheckbox.addEventListener("change", e => onCheck())
 freightCheckbox.addEventListener("change", e => onCheck())
 
+map.on("postrender", () => {
+  document.querySelector('footer').style.opacity = view.getZoom() < 3 ? 1 : 0
+})
+
 window.enableEditing = () => {
   document.body.addEventListener("click", e => {
     if (!e.shiftKey) return

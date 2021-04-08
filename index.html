@@ -26,19 +26,34 @@
         position: absolute;
         top: 0;
         right: 0;
-        background: rgba(255,255,255,0.5);
         margin-left: 4em;
         text-align: right;
-      }
-      select, input, label {
-        font-size: 1.25rem;
-        font-family: -Apple-System, sans-serif;
       }
       label {
         cursor: pointer;
         line-height: 2em;
         display: inline-block;
         padding-right: 0.5em;
+      }
+      footer {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        transition: opacity 500ms linear;
+      }
+      select, input, label, footer {
+        font-size: 1.25rem;
+        font-family: -Apple-System, sans-serif;
+      }
+      form, footer {
+        background: rgba(0,20,45,0.5);
+        color: #fff;
+        font-size: 1rem;
+        padding: 0.25rem 0.5rem;
+      }
+      footer a {
+        text-decoration: none;
+        color: #0cb6f7;
       }
     </style>
   </head>
@@ -52,6 +67,9 @@
     </label><label for="ground">
       <input type="checkbox" id="ground" checked />Satellite
     </label></form>
+    <footer>map by <a href="https://twitter.com/GarethDennis">Gareth Dennis</a>
+      • viewer by <a href="https://twitter.com/blob8108">blobby tables</a>
+      • source on <a href="https://github.com/tjvr/anengineerplays-archipelago-map">GitHub</a></footer>
     <script src="main.js"></script>
   </body>
 </html>
