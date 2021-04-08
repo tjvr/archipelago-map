@@ -222,7 +222,7 @@ const saveState = () => {
 
 railsCheckbox.checked = true
 groundCheckbox.checked = true
-freightCheckbox.checked = true
+freightCheckbox.checked = false
 if (!restoreState()) {
   saveState()
 }
