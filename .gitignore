@@ -3,5 +3,4 @@ dist/
 data/
 .parcel-cache/
 *.ppm
-source.pdf
-
+*.pdf

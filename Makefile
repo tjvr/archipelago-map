@@ -16,7 +16,7 @@ static/ground: ground.ppm
 freight.ppm: src/freightnobackground.pdf
 	pdftoppm -singlefile $< > $@
 
-rails.ppm: source.pdf
+rails.ppm: TheArchipelagoMap4.pdf
 	pdftoppm -f 1 -r 300 -singlefile $< > $@
 
 ground.ppm: source.pdf
