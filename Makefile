@@ -1,7 +1,13 @@
-all: static/ground static/rails static/freight
+all: static/ground static/rails static/freight static/hills
 
 static/hills: hillshading.png
-	vips dzsave hillshading.png static/hills --layout google --suffix .jpg --tile-size 256
+	rm -rf static/hills/*
+	vips dzsave $< $@ \
+	  --layout google \
+	  --suffix .jpg \
+	  --tile-size 256 \
+	  --background 0,0,0 \
+	  --skip-blanks 160
 
 static/freight: freight.ppm
 	./tiles.py $< $@ .png
@@ -10,9 +16,6 @@ static/rails: rails.ppm
 	./tiles.py $< $@ .png
 
 static/ground: ground.ppm
-	./tiles.py $< $@ .jpg
-
-static/hills: hillshading.png
 	./tiles.py $< $@ .jpg
 
 freight.ppm: src/freightnobackground.pdf
