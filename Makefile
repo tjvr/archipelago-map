@@ -1,8 +1,5 @@
 all: static/ground static/rails static/freight
 
-rails.pdf: source.pdf
-	# Get the fourth page of the PDF.
-	pdftk $< cat 4 output $@
 static/hills: hillshading.png
 	vips dzsave hillshading.png static/hills --layout google --suffix .jpg --tile-size 256
 
@@ -15,20 +12,20 @@ static/rails: rails.ppm
 static/ground: ground.ppm
 	./tiles.py $< $@ .jpg
 
+static/hills: hillshading.png
+	./tiles.py $< $@ .jpg
+
 freight.ppm: src/freightnobackground.pdf
 	pdftoppm -singlefile $< > $@
 
-rails.ppm: TheArchipelagoMap5.pdf
+rails.ppm: rails.pdf
 	pdftoppm -f 1 -r 300 -singlefile $< > $@
 
-ground.ppm: source.pdf
-	pdftoppm -f 3 -singlefile $< > $@
-
-source.pdf:
-	curl -L https://www.dropbox.com/s/uccbzj05ouy4p6w/mapupdates.pdf > $@
+#ground.ppm: map5.pdf
+#	pdftoppm -f 3 -singlefile $< > $@
 
 clean:
-	rm -f source.pdf rails.ppm ground.ppm
+	rm -f rails.ppm ground.ppm
 .PHONY: clean all
 
 #nope:
