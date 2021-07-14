@@ -260,10 +260,13 @@ const saveState = () => {
 }
 
 checkboxes.rails.checked = true
-checkboxes.ground.checked = true
-checkboxes.freight.checked = false
 checkboxes.hills.checked = true
-layers.freight.visible = false
+
+checkboxes.freight.checked = false
+checkboxes.ground.checked = false
+
+layers.freight.setVisible(false)
+layers.ground.setVisible(false)
 
 if (!restoreState()) {
   saveState()
