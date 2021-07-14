@@ -11,6 +11,7 @@
         height: 100%;
         margin: 0;
         padding: 0;
+        overflow: hidden;
       }
       .svg-layer {
         position: absolute;
@@ -20,14 +21,14 @@
         height: 100%;
       }
       #map {
-        background: #00142d;
+        background: #000;
       }
       form {
         position: absolute;
-        top: 0;
-        right: 0;
+        top: -1px;
+        right: -1px;
         margin-left: 4em;
-        text-align: right;
+        text-align: left;
       }
       label {
         cursor: pointer;
@@ -37,16 +38,17 @@
       }
       footer {
         position: absolute;
-        bottom: 0;
-        right: 0;
+        bottom: -1px;
+        right: -1px;
         transition: opacity 500ms linear;
       }
-      select, input, label, footer {
+      select, input, label, footer, button {
         font-size: 1.25rem;
         font-family: -Apple-System, sans-serif;
       }
       form, footer {
-        background: rgba(0,20,45,0.5);
+        background: rgba(0,0,0,0.8);
+        border: 1px solid #fff;
         color: #fff;
         font-size: 1rem;
         padding: 0.25rem 0.5rem;
@@ -55,18 +57,40 @@
         text-decoration: none;
         color: #0cb6f7;
       }
+      #menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      #menu input {
+      }
+      #menu > li > label {
+        border-top: 1px solid rgba(255,255,255,0.5);
+        display: block;
+      }
+      #menu > li:first-child > label {
+        border-top: none;
+      }
+      #menu {
+        display: none;
+      }
+      #menu.visible {
+        display: block;
+      }
     </style>
   </head>
   <body>
     <div id="map" class="map"></div>
-    <form><select id="dropdown" tabindex="1">
-    </select><label for="rails">
-      <input type="checkbox" id="rails" checked />Lines
-    </label><label for="freight">
-      <input type="checkbox" id="freight" checked />Industries
-    </label><label for="ground">
-      <input type="checkbox" id="ground" checked />Satellite
-    </label></form>
+    <form>
+      <select id="dropdown" tabindex="1"></select>
+      <button id="toggle-menu">Layers</button>
+      <ul id="menu">
+        <li><label for="freight"><input type="checkbox" id="freight" checked /> Industries</label>
+        <li><label for="rails"><input type="checkbox" id="rails" checked /> Lines</label>
+        <li><label for="hills"><input type="checkbox" id="hills" checked /> Terrain</label>
+        <li><label for="ground"><input type="checkbox" id="ground" checked /> Satellite</label>
+      </ul>
+    </form>
     <footer>map by <a href="https://twitter.com/GarethDennis">Gareth Dennis</a>
       • viewer by <a href="https://twitter.com/blob8108">blobby tables</a>
       • source on <a href="https://github.com/tjvr/anengineerplays-archipelago-map">GitHub</a></footer>

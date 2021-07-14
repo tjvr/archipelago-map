@@ -1,34 +1,51 @@
 all: static/ground static/rails static/freight static/hills
 
-static/hills: hillshading.png
-	rm -rf static/hills/*
+static/hills: src/hillshading.png
+	rm -rf $@/*
 	vips dzsave $< $@ \
+	  --overlap 0 \
 	  --layout google \
 	  --suffix .jpg \
 	  --tile-size 256 \
 	  --background 0,0,0 \
-	  --skip-blanks 160
+	  --skip-blanks 160 \
+	  --depth onetile
 
-static/freight: freight.ppm
-	./tiles.py $< $@ .png
+static/rails: tmp/rails-alpha.png
+	rm -rf $@/*
+	vips dzsave $< $@ \
+	  --overlap 0 \
+	  --layout google \
+	  --suffix .png \
+	  --tile-size 256 \
+	  --background 0,0,0,0 \
+	  --skip-blanks 40 \
+	  --depth onetile
 
-static/rails: rails.ppm
-	./tiles.py $< $@ .png
+tmp/rails-alpha.png: tmp/rails.ppm
+	./guess_alpha_and_resize.py $< $@
 
-static/ground: ground.ppm
-	./tiles.py $< $@ .jpg
-
-freight.ppm: src/freightnobackground.pdf
-	pdftoppm -singlefile $< > $@
-
-rails.ppm: rails.pdf
+tmp/rails.ppm: src/rails.pdf
 	pdftoppm -f 1 -r 300 -singlefile $< > $@
 
-#ground.ppm: map5.pdf
-#	pdftoppm -f 3 -singlefile $< > $@
+static/freight: tmp/freight-alpha.png
+	rm -rf $@/*
+	vips dzsave $< $@ \
+	  --overlap 0 \
+	  --layout google \
+	  --suffix .png \
+	  --tile-size 256 \
+	  --background 0,0,0,0 \
+	  --skip-blanks 40
+
+tmp/freight-alpha.png: tmp/freight.ppm
+	./guess_alpha_and_resize.py $< $@
+
+tmp/freight.ppm: src/freightnobackground.pdf
+	pdftoppm -singlefile $< > $@
 
 clean:
-	rm -f rails.ppm ground.ppm
+	rm -rf tmp
 .PHONY: clean all
 
 #nope:

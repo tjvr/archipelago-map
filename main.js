@@ -24,52 +24,52 @@ const layers = {
       transition: 0,
       wrapX: false,
     }),
-    opacity: groundOpacity,
+    //opacity: groundOpacity,
   }),
 
   rails: new TileLayer({
     source: new XYZ({
-      url: "./rails/{z}/{x}/{y}.png",
+      url: "./rails/{z}/{y}/{x}.png",
       minZoom: 0,
       maxZoom: 6,
       // We want transparency
-      transition: 0,
+      //transition: 0,
       wrapX: false,
     }),
   }),
 
   freight: new TileLayer({
     source: new XYZ({
-      url: "./freight/{z}/{x}/{y}.png",
+      url: "./freight/{z}/{y}/{x}.png",
       minZoom: 0,
-      maxZoom: 5,
-      // We want transparency
-      transition: 0,
+      maxZoom: 4,
       wrapX: false,
     }),
-    opacity: 0.8,
-    visible: false,
   }),
 
   hills: new TileLayer({
     source: new XYZ({
-      url: "./hills2/{z}/{y}/{x}.jpg",
+      url: "./hills/{z}/{y}/{x}.jpg",
       minZoom: 0,
       maxZoom: 5,
       // We want transparency
       transition: 0,
       wrapX: false,
     }),
-    //opacity: 0.5,
-    visible: true,
+    opacity: 0.5,
   }),
 }
 
+layers.ground.on('prerender', function(evt) {
+  evt.context.fillStyle = '#00142d'
+  evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height)
+})
+
 layers.hills.on('prerender', function(evt) {
-  evt.context.globalCompositeOperation = "multiply";
+  evt.context.globalCompositeOperation = "screen"
 })
 layers.hills.on('postrender', function(evt) {
-  evt.context.globalCompositeOperation = "source-over"; // the default
+  evt.context.globalCompositeOperation = "source-over" // the default
 })
 
 const destinations = [
@@ -208,8 +208,8 @@ const view = new View({
 
 const map = new Map({
   target,
-  //layers: [layers.ground, layers.rails, hillsLayer, layers.freight, layers.cities],
-  layers: [layers.ground, layers.rails, layers.freight, layers.cities],
+  layers: [layers.ground, layers.freight, layers.rails, layers.hills, layers.cities],
+  //layers: [layers.ground, layers.rails, layers.freight, layers.cities],
   //layers: [layers.hills],
   view,
 })
@@ -219,7 +219,7 @@ const updateLayers = () => {
   layers.ground.setVisible(checkboxes.ground.checked)
   layers.freight.setVisible(checkboxes.freight.checked)
   layers.hills.setVisible(checkboxes.hills.checked)
-  layers.ground.setOpacity(checkboxes.rails.checked || checkboxes.freight.checked ? groundOpacity : 1)
+  //layers.ground.setOpacity(checkboxes.rails.checked || checkboxes.freight.checked ? groundOpacity : 1)
 }
 
 const restoreState = () => {
@@ -260,6 +260,9 @@ const saveState = () => {
 checkboxes.rails.checked = true
 checkboxes.ground.checked = true
 checkboxes.freight.checked = false
+checkboxes.hills.checked = true
+layers.freight.visible = false
+
 if (!restoreState()) {
   saveState()
 }
@@ -278,10 +281,12 @@ map.on("moveend", saveState)
 checkboxes.rails.addEventListener("change", e => onCheck())
 checkboxes.ground.addEventListener("change", e => onCheck())
 checkboxes.freight.addEventListener("change", e => onCheck())
+checkboxes.hills.addEventListener("change", e => onCheck())
 
 map.on("postrender", () => {
   document.querySelector('footer').style.opacity = view.getZoom() < 3 ? 1 : 0
 })
+window.ol = map
 
 window.enableEditing = () => {
   document.body.addEventListener("click", e => {
