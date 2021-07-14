@@ -12,7 +12,7 @@ import TileLayer from "ol/layer/Tile"
 import XYZ from "ol/source/XYZ"
 import { Modify } from "ol/interaction"
 
-const groundOpacity = 0.3
+const groundOpacity = 0.5
 
 const layers = {
   ground: new TileLayer({
@@ -24,7 +24,7 @@ const layers = {
       transition: 0,
       wrapX: false,
     }),
-    //opacity: groundOpacity,
+    opacity: groundOpacity,
   }),
 
   rails: new TileLayer({
@@ -51,12 +51,12 @@ const layers = {
     source: new XYZ({
       url: "./hills/{z}/{y}/{x}.jpg",
       minZoom: 0,
-      maxZoom: 5,
+      maxZoom: 4,
       // We want transparency
       transition: 0,
       wrapX: false,
     }),
-    opacity: 0.5,
+    opacity: 0.4,
   }),
 }
 
@@ -67,11 +67,12 @@ layers.ground.on('prerender', function(evt) {
 })
 
 layers.hills.on('prerender', function(evt) {
-  evt.context.globalCompositeOperation = "screen"
+  evt.context.globalCompositeOperation = "overlay"
 })
 layers.hills.on('postrender', function(evt) {
   evt.context.globalCompositeOperation = "source-over" // the default
 })
+
 
 const destinations = [
   [[58.857393585379704, 8.029051320682434], "Ashbourne"],
@@ -220,7 +221,7 @@ const updateLayers = () => {
   layers.ground.setVisible(checkboxes.ground.checked)
   layers.freight.setVisible(checkboxes.freight.checked)
   layers.hills.setVisible(checkboxes.hills.checked)
-  //layers.ground.setOpacity(checkboxes.rails.checked || checkboxes.freight.checked ? groundOpacity : 1)
+  layers.ground.setOpacity(checkboxes.rails.checked || checkboxes.freight.checked ? groundOpacity : 1)
 }
 
 const restoreState = () => {
