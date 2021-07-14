@@ -14,40 +14,62 @@ import { Modify } from "ol/interaction"
 
 const groundOpacity = 0.3
 
-const groundLayer = new TileLayer({
-  source: new XYZ({
-    url: "./ground/{z}/{x}/{y}.jpg",
-    minZoom: 0,
-    maxZoom: 5,
-    // transition and opacity like to fight
-    transition: 0,
-    wrapX: false,
+const layers = {
+  ground: new TileLayer({
+    source: new XYZ({
+      url: "./ground/{z}/{x}/{y}.jpg",
+      minZoom: 0,
+      maxZoom: 5,
+      // transition and opacity like to fight
+      transition: 0,
+      wrapX: false,
+    }),
+    opacity: groundOpacity,
   }),
-  opacity: groundOpacity,
-})
 
-const railsLayer = new TileLayer({
-  source: new XYZ({
-    url: "./rails/{z}/{x}/{y}.png",
-    minZoom: 0,
-    maxZoom: 6,
-    // We want transparency
-    transition: 0,
-    wrapX: false,
+  rails: new TileLayer({
+    source: new XYZ({
+      url: "./rails/{z}/{x}/{y}.png",
+      minZoom: 0,
+      maxZoom: 6,
+      // We want transparency
+      transition: 0,
+      wrapX: false,
+    }),
   }),
-})
 
-const freightLayer = new TileLayer({
-  source: new XYZ({
-    url: "./freight/{z}/{x}/{y}.png",
-    minZoom: 0,
-    maxZoom: 5,
-    // We want transparency
-    transition: 0,
-    wrapX: false,
+  freight: new TileLayer({
+    source: new XYZ({
+      url: "./freight/{z}/{x}/{y}.png",
+      minZoom: 0,
+      maxZoom: 5,
+      // We want transparency
+      transition: 0,
+      wrapX: false,
+    }),
+    opacity: 0.8,
+    visible: false,
   }),
-  opacity: 0.8,
-  visible: false,
+
+  hills: new TileLayer({
+    source: new XYZ({
+      url: "./hills2/{z}/{y}/{x}.jpg",
+      minZoom: 0,
+      maxZoom: 5,
+      // We want transparency
+      transition: 0,
+      wrapX: false,
+    }),
+    //opacity: 0.5,
+    visible: true,
+  }),
+}
+
+layers.hills.on('prerender', function(evt) {
+  evt.context.globalCompositeOperation = "multiply";
+})
+layers.hills.on('postrender', function(evt) {
+  evt.context.globalCompositeOperation = "source-over"; // the default
 })
 
 const destinations = [
@@ -133,7 +155,7 @@ const citiesSource = new VectorSource({
   features,
   wrapX: false,
 })
-const citiesLayer = new VectorLayer({
+layers.cities = new VectorLayer({
   source: citiesSource,
   style: feature => {
     labelStyle.getText().setText(feature.get("name"))
@@ -142,10 +164,20 @@ const citiesLayer = new VectorLayer({
   declutter: true,
 })
 
+const menu = document.getElementById("menu")
+const toggleMenuButton = document.getElementById("toggle-menu")
+toggleMenuButton.addEventListener('click', e => {
+  e.preventDefault()
+  menu.classList.toggle('visible')
+})
+
 const dropdown = document.getElementById("dropdown")
-const railsCheckbox = document.getElementById("rails")
-const groundCheckbox = document.getElementById("ground")
-const freightCheckbox = document.getElementById("freight")
+const checkboxes = {
+  rails: document.getElementById("rails"),
+  ground: document.getElementById("ground"),
+  freight: document.getElementById("freight"),
+  hills: document.getElementById("hills"),
+}
 
 for (let [[x, y], name] of destinations) {
   const option = document.createElement("option")
@@ -176,15 +208,18 @@ const view = new View({
 
 const map = new Map({
   target,
-  layers: [groundLayer, freightLayer, railsLayer, citiesLayer], //, citiesLayer],
+  //layers: [layers.ground, layers.rails, hillsLayer, layers.freight, layers.cities],
+  layers: [layers.ground, layers.rails, layers.freight, layers.cities],
+  //layers: [layers.hills],
   view,
 })
 
 const updateLayers = () => {
-  railsLayer.setVisible(railsCheckbox.checked)
-  groundLayer.setVisible(groundCheckbox.checked)
-  freightLayer.setVisible(freightCheckbox.checked)
-  groundLayer.setOpacity(railsCheckbox.checked || freightCheckbox.checked ? groundOpacity : 1)
+  layers.rails.setVisible(checkboxes.rails.checked)
+  layers.ground.setVisible(checkboxes.ground.checked)
+  layers.freight.setVisible(checkboxes.freight.checked)
+  layers.hills.setVisible(checkboxes.hills.checked)
+  layers.ground.setOpacity(checkboxes.rails.checked || checkboxes.freight.checked ? groundOpacity : 1)
 }
 
 const restoreState = () => {
@@ -197,9 +232,10 @@ const restoreState = () => {
   if (isNaN(x) || isNaN(y) || isNaN(z)) return false
   view.setCenter([x * featureScale, y * featureScale])
   view.setZoom(z)
-  railsCheckbox.checked = layers.find(x => x == "rails")
-  groundCheckbox.checked = layers.find(x => x == "ground")
-  freightCheckbox.checked = layers.find(x => x == "freight")
+  checkboxes.rails.checked = layers.find(x => x == "rails")
+  checkboxes.ground.checked = layers.find(x => x == "ground")
+  checkboxes.freight.checked = layers.find(x => x == "freight")
+  checkboxes.hills.checked = layers.find(x => x == "hills")
   updateLayers()
   return true
 }
@@ -210,9 +246,10 @@ const saveState = () => {
   const x = center[0] / featureScale
   const y = center[1] / featureScale
   const layerIDs = []
-  if (groundLayer.getVisible()) layerIDs.push("ground")
-  if (railsLayer.getVisible()) layerIDs.push("rails")
-  if (freightLayer.getVisible()) layerIDs.push("freight")
+  if (layers.ground.getVisible()) layerIDs.push("ground")
+  if (layers.rails.getVisible()) layerIDs.push("rails")
+  if (layers.freight.getVisible()) layerIDs.push("freight")
+  if (layers.hills.getVisible()) layerIDs.push("hills")
   window.history.replaceState(
     {},
     "",
@@ -220,9 +257,9 @@ const saveState = () => {
   )
 }
 
-railsCheckbox.checked = true
-groundCheckbox.checked = true
-freightCheckbox.checked = false
+checkboxes.rails.checked = true
+checkboxes.ground.checked = true
+checkboxes.freight.checked = false
 if (!restoreState()) {
   saveState()
 }
@@ -238,9 +275,9 @@ const onCheck = () => {
 }
 
 map.on("moveend", saveState)
-railsCheckbox.addEventListener("change", e => onCheck())
-groundCheckbox.addEventListener("change", e => onCheck())
-freightCheckbox.addEventListener("change", e => onCheck())
+checkboxes.rails.addEventListener("change", e => onCheck())
+checkboxes.ground.addEventListener("change", e => onCheck())
+checkboxes.freight.addEventListener("change", e => onCheck())
 
 map.on("postrender", () => {
   document.querySelector('footer').style.opacity = view.getZoom() < 3 ? 1 : 0
@@ -261,7 +298,7 @@ window.enableEditing = () => {
   })
 
   const modify = new Modify({
-    hitDetection: citiesLayer,
+    hitDetection: layers.cities,
     source: citiesSource,
   })
   modify.on(["modifystart", "modifyend"], function (evt) {
