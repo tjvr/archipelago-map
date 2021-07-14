@@ -3,6 +3,8 @@ all: static/ground static/rails static/freight
 rails.pdf: source.pdf
 	# Get the fourth page of the PDF.
 	pdftk $< cat 4 output $@
+static/hills: hillshading.png
+	vips dzsave hillshading.png static/hills --layout google --suffix .jpg --tile-size 256
 
 static/freight: freight.ppm
 	./tiles.py $< $@ .png
