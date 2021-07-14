@@ -17,7 +17,7 @@ const groundOpacity = 0.3
 const layers = {
   ground: new TileLayer({
     source: new XYZ({
-      url: "./ground/{z}/{x}/{y}.jpg",
+      url: "./ground/{z}/{y}/{x}.jpg",
       minZoom: 0,
       maxZoom: 5,
       // transition and opacity like to fight
@@ -62,6 +62,7 @@ const layers = {
 
 layers.ground.on('prerender', function(evt) {
   evt.context.fillStyle = '#00142d'
+  //evt.context.fillStyle = '#04162c'
   evt.context.fillRect(0, 0, evt.context.canvas.width, evt.context.canvas.height)
 })
 

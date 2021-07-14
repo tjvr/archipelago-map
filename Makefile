@@ -44,6 +44,23 @@ tmp/freight-alpha.png: tmp/freight.ppm
 tmp/freight.ppm: src/freightnobackground.pdf
 	pdftoppm -singlefile $< > $@
 
+static/ground: tmp/ground-scaled.png
+	rm -rf $@/*
+	vips dzsave $< $@ \
+	  --overlap 0 \
+	  --layout google \
+	  --suffix .jpg \
+	  --tile-size 256 \
+	  --background 0,20,45
+	  #--skip-blanks 128
+	#00412d
+
+tmp/ground-scaled.png: tmp/ground.ppm
+	vips resize $< $@ 0.97523809523
+
+tmp/ground.ppm: src/source.pdf
+	pdftoppm -f 3 -singlefile $< > $@
+
 clean:
 	rm -rf tmp
 .PHONY: clean all
