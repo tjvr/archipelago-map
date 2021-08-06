@@ -15,6 +15,15 @@ import { Modify } from "ol/interaction"
 const groundOpacity = 0.5
 
 const layers = {
+  labels: new TileLayer({
+    source: new XYZ({
+      url: "./labels/{z}/{y}/{x}.png",
+      minZoom: 0,
+      maxZoom: 5,
+      wrapX: false,
+    }),
+  }),
+
   ground: new TileLayer({
     source: new XYZ({
       url: "./ground/{z}/{y}/{x}.jpg",
@@ -75,68 +84,16 @@ layers.hills.on('postrender', function(evt) {
 
 
 const destinations = [
-  [[58.857393585379704, 8.029051320682434], "Ashbourne"],
-  [[-101.07963826503743, 26.983790383557437], "Blackpool"],
-  [[103.98604171542107, -53.96367178558295], "Bodmin"],
-  [[71.80855802232973, -63.14458802716806], "BRADSHAW"],
-  [[25.472032793679965, -31.67979858241558], "Bridport"],
-  [[-151.22457796032384, 20.635824291558585], "Bristol"],
-  //[[-93.2811256341133, 7.673403548586084], "Bungay Junction"],
-  [[105.93070902105771, 74.15486956662016], "Bury"],
-  [[-63.468603191239566, 100.32513535906794], "Chesterfield"],
-  [[-4.375109938366542, -36.608174112460496], "Corby"],
-  [[34.81861666819915, 133.13799840421567], "Crowle"],
-  [[-21.903996406719976, 122.99739846972537], "Dorchester"],
-  [[-26.46271076585097, -99.85895607850966], "Droitwich Spa"],
-  [[157.0856229019735, -90.10174521099111], "Ellesmere"],
-  [[-88.45506970598368, -5.631785917174703], "Elliotsburgh"],
-  [[23.851044424243405, -89.76469493657234], "Ely"],
-  [[90.05024134132293, -106.14636991620708], "Finsbury"],
-  [[-102.15459084009673, -78.69801134493858], "Flitwick"],
-  [[142.2725063392218, 21.569477653787416], "Framlingham"],
-  [[-98.38437097739406, 149.56466684962083], "Frome"],
-  [[25.46873141815521, -60.040627349051576], "Guisborough"],
-  //[[116.56369740402104, 24.658056117689995], "Halewood Co"],
-  [[-50.698153259459815, -40.493801791797885], "Harrogate"],
-  [[72.14815115121992, 94.53149831677493], "Hartlepool"],
-  [[83.61204017968834, 61.60937866088331], "Haverhill"],
-  [[89.71326476386257, 33.63370620718631], "Hendon"],
-  [[-44.80329086398058, 137.1923231322147], "Hexham"],
-  [[22.278988750009006, 65.97086405144266], "Ipswich"],
-  [[80.91925823186124, -30.440858011057415], "Kingston"],
-  [[-24.003765398817478, -77.1282175299483], "Knottingley"],
-  [[-80.57961842572169, -96.86155649721158], "Leyton"],
-  [[132.43332386274128, -79.09689101980054], "Liverpool"],
-  [[83.91332230464988, -140.10616059380902], "London"],
-  [[4.113536138186262, 135.28187032479363], "Lowestoft"],
-  [[18.43873778806026, 13.00745243778308], "Maghull"],
-  [[67.55702401980012, -92.23389846178371], "Market Harbourough"],
-  [[-51.91823077696838, -8.107885713846965], "Matlock"],
-  [[108.54466447235271, -134.55447031116734], "Mayburgh"],
-  [[23.89221061231848, 109.33208127274662], "Melksham"],
-  [[-19.98696294266243, 88.12148490783832], "Morecambe"],
-  [[-147.22778397795156, 50.7108321934315], "Orpington"],
-  [[-27.884502081949197, -14.075754653285568], "Paignton"],
-  [[-96.69479371198763, 105.10735266584933], "Rayleigh"],
-  [[49.26415670935911, -39.93269156566679], "Richmond"],
-  [[39.54010328917441, 36.741267554822656], "Rugeley"],
-  [[-101.4678155287825, -42.917033634687556], "Shanklin"],
-  [[-98.6933127714737, 60.559740294417715], "Shepshed"],
-  [[91.73692177353637, -78.58905619902066], "Shildon"],
-  [[-134.57613858696837, 1.352380125297934], "Southport"],
-  [[43.25264894658088, -13.144228745223703], "Stamford"],
-  [[-129.42590194629003, 29.61879517646262], "Stevenage"],
-  [[-13.89298334727036, 60.86223665471799], "Stratford"],
-  [[46.73666803195333, 85.53834677230032], "Wakefield"],
-  [[-62.16492416908189, 43.07410063146696], "Wooler"],
+  [[-11509256.048274003,-4792688.738366079],"Shanklin"],[[-490012.3130970527,-4100115.5005955757],"Corby"],[[-2794106.2875826117,-1880138.6312788215],"Paignton"],[[-10144788.846995935,-916145.8109319322],"Elliotsburgh"],[[-5760217.333035581,-962707.2153230661],"Matlock"],[[-5463597.002579674,-4742097.9269354865],"Harrogate"],[[-2808952.8403542554,13615641.255143384],"Dorchester"],[[-1745710.8981249388,9928275.935007874],"Morecambe"],[[-1063020.831228012,6706756.77091109],"Stratford"],[[425145.5516069585,14546871.046588529],"Lowestoft"],[[2495246.740001009,7388736.773761578],"Ipswich"],[[4330976.6545172455,15191573.29868353],"Crowle"],[[11646436.67212716,-6043931.239985291],"Bodmin"],[[9499459.707118412,3616769.258477041],"Hendon"],[[15770342.367057431,2482151.8503076993],"Framlingham"],[[8720627.506690647,-3290608.3436778146],"Kingston"],[[8112421.699137073,-7487879.54570882],"BRADSHAW"],[[2675927.5885796696,12245193.102547621],"Melksham"],[[7939238.78343342,10489194.59531007],"Hartlepool"],[[4828881.910187664,9214617.52819717],"Wakefield"],[[9165438.556871613,6802442.19696762],"Haverhill"],[[12129719.483496044,8382194.510402279],"Bury"],[[2852497.9188333834,-6724550.263093776],"Guisborough"],[[2852867.672892156,-3548137.441230545],"Bridport"],[[4844296.682017058,-1472153.6194650547],"Stamford"],[[5517585.55144822,-4472461.45535468],"Richmond"],[[2103096.0023485394,1115224.8096935754],"Maghull"],[[4928957.415177724,4434110.874124361],"Rugeley"],[[6354493.2440395225,1199665.1981726745],"Ashbourne"],[[2636385.37519719,-10395975.248173911],"Ely"],[[9981109.92988392,-9091906.309091015],"Shildon"],[[14430819.092168609,-8816933.605996683],"Liverpool"],[[17527219.85833634,-10255573.806566413],"Ellesmere"],[[11849604.605943765,-15167908.887902051],"Mayburgh"],[[9213155.330673117,-15740793.869832855],"London"],[[9708366.014632285,-11944283.678644933],"Finsbury"],[[7381249.922769944,-10068209.625334239],"Market Harbourough"],[[-5017968.576765825,15365540.190808048],"Hexham"],[[-10733244.366263656,11650258.228636468],"Rayleigh"],[[-10859494.900552345,16381747.908406558],"Frome"],[[-6885946.520778631,11068462.573429814],"Chesterfield"],[[-15152304.980342142,-54274.85515439627],"Southport"],[[-17407418.874577414,2638719.019780983],"Bristol"],[[-13945657.818793025,3107364.6616410445],"Stevenage"],[[-16959777.54612035,6322029.96539974],"Orpington"],[[-10968220.04609807,3001190.751433737],"Blackpool"],[[-11402151.769343752,6778492.4806149425],"Shepshed"],[[-7217836.546928883,4259618.786482067],"Wooler"],[[-2708823.1912926775,-11400778.824205598],"Droitwich Spa"],[[-8930601.898182154,-10893904.69386308],"Leyton"],[[-11420355.303179754,-8643012.786193624],"Flitwick"],[[-2988833.398123209,-7862879.238051959],"Knottingley"]
 ]
+destinations.sort((a, b) => a[1] < b[1] ? -1 : a[1] > b[1] ? +1 : 0)
 
 const featureScale = 112000
 
 const features = destinations.map(
   ([[x, y], name]) =>
     new Feature({
-      geometry: new Point([x * featureScale, y * featureScale]),
+      geometry: new Point([x, y]),
       name,
     })
 )
@@ -153,6 +110,7 @@ const labelStyle = new Style({
 
 const fillStyle = new Style({})
 
+
 const citiesSource = new VectorSource({
   features,
   wrapX: false,
@@ -164,6 +122,7 @@ layers.cities = new VectorLayer({
     return [fillStyle, labelStyle]
   },
   declutter: true,
+  visible: false,
 })
 
 const menu = document.getElementById("menu")
@@ -175,6 +134,7 @@ toggleMenuButton.addEventListener('click', e => {
 
 const dropdown = document.getElementById("dropdown")
 const checkboxes = {
+  labels: document.getElementById("labels"),
   rails: document.getElementById("rails"),
   ground: document.getElementById("ground"),
   freight: document.getElementById("freight"),
@@ -190,10 +150,10 @@ for (let [[x, y], name] of destinations) {
 
 dropdown.addEventListener("change", e => {
   const [x, y] = dropdown.value.split(",")
-  view.setZoom(5)
+  view.setZoom(5.25)
   const size = map.getSize()
   const [width, height] = size
-  view.centerOn([x * featureScale, y * featureScale], size, [width / 2, height / 2])
+  view.centerOn([x, y], size, [width / 2, height / 2])
 })
 
 dropdown.focus()
@@ -210,9 +170,7 @@ const view = new View({
 
 const map = new Map({
   target,
-  layers: [layers.ground, layers.freight, layers.rails, layers.hills, layers.cities],
-  //layers: [layers.ground, layers.rails, layers.freight, layers.cities],
-  //layers: [layers.hills],
+  layers: [layers.ground, layers.freight, layers.rails, layers.hills, layers.labels, layers.cities],
   view,
 })
 
@@ -220,6 +178,7 @@ const updateLayers = () => {
   layers.rails.setVisible(checkboxes.rails.checked)
   layers.ground.setVisible(checkboxes.ground.checked)
   layers.freight.setVisible(checkboxes.freight.checked)
+  layers.labels.setVisible(checkboxes.labels.checked)
   layers.hills.setVisible(checkboxes.hills.checked)
   layers.ground.setOpacity(checkboxes.rails.checked || checkboxes.freight.checked ? groundOpacity : 1)
 }
@@ -237,6 +196,7 @@ const restoreState = () => {
   checkboxes.rails.checked = layers.find(x => x == "rails")
   checkboxes.ground.checked = layers.find(x => x == "ground")
   checkboxes.freight.checked = layers.find(x => x == "freight")
+  checkboxes.labels.checked = layers.find(x => x == "labels")
   checkboxes.hills.checked = layers.find(x => x == "hills")
   updateLayers()
   return true
@@ -251,6 +211,7 @@ const saveState = () => {
   if (layers.ground.getVisible()) layerIDs.push("ground")
   if (layers.rails.getVisible()) layerIDs.push("rails")
   if (layers.freight.getVisible()) layerIDs.push("freight")
+  if (layers.labels.getVisible()) layerIDs.push("labels")
   if (layers.hills.getVisible()) layerIDs.push("hills")
   window.history.replaceState(
     {},
@@ -261,6 +222,7 @@ const saveState = () => {
 
 checkboxes.rails.checked = true
 checkboxes.hills.checked = true
+checkboxes.labels.checked = true
 
 checkboxes.freight.checked = false
 checkboxes.ground.checked = false
@@ -287,6 +249,7 @@ checkboxes.rails.addEventListener("change", e => onCheck())
 checkboxes.ground.addEventListener("change", e => onCheck())
 checkboxes.freight.addEventListener("change", e => onCheck())
 checkboxes.hills.addEventListener("change", e => onCheck())
+checkboxes.labels.addEventListener("change", e => onCheck())
 
 map.on("postrender", () => {
   document.querySelector('footer').style.opacity = view.getZoom() < 3 ? 1 : 0
@@ -294,6 +257,7 @@ map.on("postrender", () => {
 window.ol = map
 
 window.enableEditing = () => {
+  layers.cities.setVisible(true)
   document.body.addEventListener("click", e => {
     if (!e.shiftKey) return
     const pixel = [e.clientX, e.clientY]

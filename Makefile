@@ -1,4 +1,4 @@
-all: static/ground static/rails static/freight static/hills
+all: static/ground static/rails static/freight static/hills static/labels
 
 static/hills: src/hillshading.png
 	rm -rf $@/*
@@ -41,8 +41,24 @@ static/freight: tmp/freight-alpha.png
 tmp/freight-alpha.png: tmp/freight.ppm
 	./guess_alpha_and_resize.py $< $@
 
-tmp/freight.ppm: src/freightnobackground.pdf
-	pdftoppm -singlefile $< > $@
+tmp/freight.ppm: src/map_updates.pdf
+	pdftoppm -f 2 -singlefile $< > $@
+
+static/labels: tmp/labels-alpha.png
+	rm -rf $@/*
+	vips dzsave $< $@ \
+	  --overlap 0 \
+	  --layout google \
+	  --suffix .png \
+	  --tile-size 256 \
+	  --background 0,0,0,0 \
+	  --skip-blanks 40
+
+tmp/labels-alpha.png: tmp/labels.ppm
+	./guess_alpha_and_resize.py $< $@
+
+tmp/labels.ppm: src/map_updates.pdf
+	pdftoppm -f 1 -r 300 -singlefile $< > $@
 
 static/ground: tmp/ground-scaled.png
 	rm -rf $@/*
