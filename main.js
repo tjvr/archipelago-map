@@ -65,7 +65,7 @@ const layers = {
       transition: 0,
       wrapX: false,
     }),
-    opacity: 0.4,
+    opacity: 0.5,
   }),
 }
 
