@@ -25,7 +25,7 @@ static/rails: tmp/rails-alpha.png
 tmp/rails-alpha.png: tmp/rails.ppm
 	./guess_alpha_and_resize.py $< $@
 
-tmp/rails.ppm: src/rails.pdf
+tmp/rails.ppm: sync/2021-08-15/TheArchipelagoMap8-rails-labels.pdf
 	pdftoppm -f 1 -r 300 -singlefile $< > $@
 
 static/freight: tmp/freight-alpha.png
@@ -57,8 +57,8 @@ static/labels: tmp/labels-alpha.png
 tmp/labels-alpha.png: tmp/labels.ppm
 	./guess_alpha_and_resize.py $< $@
 
-tmp/labels.ppm: src/map_updates.pdf
-	pdftoppm -f 1 -r 300 -singlefile $< > $@
+tmp/labels.ppm: sync/2021-08-15/TheArchipelagoMap8-rails-labels.pdf
+	pdftoppm -f 2 -r 300 -singlefile $< > $@
 
 static/ground: tmp/ground-scaled.png
 	rm -rf $@/*
@@ -74,7 +74,7 @@ static/ground: tmp/ground-scaled.png
 tmp/ground-scaled.png: tmp/ground.ppm
 	vips resize $< $@ 0.97523809523
 
-tmp/ground.ppm: sync/TheArchipelagoMap8.pdf
+tmp/ground.ppm: sync/2021-08-15/TheArchipelagoMap8.pdf
 	pdftoppm -singlefile -r 300 $< > $@
 
 clean:
