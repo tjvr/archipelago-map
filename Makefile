@@ -74,8 +74,8 @@ static/ground: tmp/ground-scaled.png
 tmp/ground-scaled.png: tmp/ground.ppm
 	vips resize $< $@ 0.97523809523
 
-tmp/ground.ppm: src/source.pdf
-	pdftoppm -f 3 -singlefile $< > $@
+tmp/ground.ppm: sync/TheArchipelagoMap8.pdf
+	pdftoppm -singlefile -r 300 $< > $@
 
 clean:
 	rm -rf tmp
