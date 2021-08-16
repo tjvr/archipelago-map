@@ -25,7 +25,7 @@ static/rails: tmp/rails-alpha.png
 tmp/rails-alpha.png: tmp/rails.ppm
 	./guess_alpha_and_resize.py $< $@
 
-tmp/rails.ppm: sync/2021-08-15/TheArchipelagoMap8-rails-labels.pdf
+tmp/rails.ppm: sync/2021-08-16/TheArchipelagoMap8.pdf
 	pdftoppm -f 1 -r 300 -singlefile $< > $@
 
 static/freight: tmp/freight-alpha.png
