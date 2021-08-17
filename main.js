@@ -33,7 +33,7 @@ const layers = {
     source: new XYZ({
       url: "./labels/{z}/{y}/{x}.png",
       minZoom: 0,
-      maxZoom: 5,
+      maxZoom: 6,
       wrapX: false,
       projection,
     }),
@@ -68,7 +68,7 @@ const layers = {
     source: new XYZ({
       url: "./freight/{z}/{y}/{x}.png",
       minZoom: 0,
-      maxZoom: 4,
+      maxZoom: 5,
       wrapX: false,
       projection,
     }),
