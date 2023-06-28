@@ -55,6 +55,15 @@ tmp/labels-alpha.png: tmp/labels.ppm
 tmp/labels.ppm: src/labels.pdf
 	pdftoppm -r 300 -singlefile $< > $@
 
+tmp/labels.svg: tmp/labels.pdf
+	# Convert that PDF page to SVG.
+	# _INKSCAPE_GC makes Inkscape work under WSL.
+	_INKSCAPE_GC=disable inkscape --without-gui --file=$< --export-plain-svg=$@
+	node_modules/.bin/svgo $@
+
+tmp/labels.pdf: sync/2021-08-15/TheArchipelagoMap8-rails-labels.pdf
+	pdftk $< cat 2 output $@
+
 static/ground: tmp/ground-scaled.png
 	rm -rf $@/*
 	vips dzsave $< $@ \
@@ -67,6 +76,10 @@ tmp/ground-scaled.png: tmp/ground.ppm
 	vips resize $< $@ 0.97523809523
 tmp/ground.ppm: src/ground.pdf
 	pdftoppm -singlefile -r 300 $< > $@
+
+source.pdf:
+	curl -L https://www.dropbox.com/s/hzwcw17v6xv13iz/TheArchipelagoMap.pdf > $@
+
 
 clean:
 	rm -rf tmp/*
