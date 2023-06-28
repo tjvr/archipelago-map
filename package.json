@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "parcel index.html crowle/index.html",
-    "build": "parcel build --public-url . index.html crowle/index.html"
+    "build": "parcel build --public-url . index.html && parcel build --public-url . crowle/index.html --dist-dir ./dist/crowle/"
   },
   "prettier": {
     "semi": false,
