@@ -1,2 +1,134 @@
 <!doctype html>
 <title>crowle</title>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.layout {
+  display: flex;
+}
+
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  width: 412px;
+}
+.menu > * {
+  margin: 0 -6px;
+  padding: 12px 0;
+  width: 200px;
+}
+.menu > *.selected {
+  background: #f6dc90;
+}
+
+.stack {
+  position: relative;
+  max-width: 100%;
+  flex-grow: 1;
+}
+.stack > * {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+footer {
+  font-size: 0.75rem;
+  font-family: -Apple-System, sans-serif;
+  padding: 1rem;
+}
+</style>
+
+<div class="layout">
+<div class="sidebar">
+<div class="menu">
+  <img data-layers="passenger -goods" src="legends/map-1.svg">
+  <img data-layers="passengerStations +passenger -goods -goodsYards" src="legends/map-2.svg">
+  <img data-layers="goods -passenger" src="legends/map-4.svg">
+  <img data-layers="goodsYards +goods -passenger -passengerStations" src="legends/map-5.svg">
+  <img data-layers="newGoodsYards" src="legends/map-9.svg">
+  <img data-layers="remove -intercityAndLabels" src="legends/map-11.svg">
+
+  <img data-layers="electrify" src="legends/map-12.svg">
+
+  <img data-layers="intercityAndLabels -remove" src="legends/map-10.svg">
+  <img data-layers="busAndLabels" src="legends/map-3.svg">
+</div>
+
+    <footer>map by <a href="https://twitter.com/GarethDennis">Gareth Dennis</a>
+      • viewer by <a href="https://twitter.com/blob8108">blobby tables</a>
+      • source on <a href="https://github.com/tjvr/anengineerplays-archipelago-map">GitHub</a></footer>
+</div>
+<div class="stack">
+  <img src="layers/0 base.svg">
+
+  <img data-layer="passenger" src="layers/1 passenger flows.svg">
+  <img data-layer="goods" src="layers/4 goods flows.svg">
+  <img data-layer="newGoodsYardsCore" src="layers/6 new yards core.svg">
+  <img data-layer="electrifyCore" src="layers/9 electrify core.svg">
+  <img data-layer="removeCore" src="layers/8 remove core.svg">
+
+  <img data-layer="passengerStations" src="layers/2 stations.svg">
+  <img data-layer="goodsYards" src="layers/5 yards.svg">
+  <img data-layer="remove" src="layers/8 remove.svg">
+  <img data-layer="electrify" src="layers/9 electrify.svg">
+
+  <img data-layer="newGoodsYards" src="layers/6 new yards.svg">
+
+  <img data-layer="labels" src="layers/labels.svg">
+  <img data-layer="busAndLabels" src="layers/3 bus + labels.svg">
+  <img data-layer="intercityAndLabels" src="layers/7 intercity + labels.svg">
+</div>
+</div>
+
+<script>
+const state = {}
+for (const el of document.querySelectorAll('.menu > *')) {
+  const layers = el.dataset.layers.split(" ")
+  const layer = layers.shift()
+  state[layer] = 0
+  console.log(layer, layers)
+  el.addEventListener('click', e => {
+    state[layer] = state[layer] ? 0 : 1
+    if (state[layer]) {
+      for (const other of layers) {
+        state[other.substring(1)] = other[0] == '+' ? 1 : 0
+      }
+    }
+    refresh()
+  })
+}
+
+function setOpacity(id, value) {
+  document.getElementById(id).style.opacity = value
+}
+function refresh() {
+  console.log(state)
+
+  // Some layers are entirely computed from other layers' state.
+  state.labels = state.busAndLabels == 0 && state.intercityAndLabels == 0 ? 1 : 0
+  state.removeCore = state.remove && !state.passenger && !state.goods ? 1 : 0
+  state.electrifyCore = state.electrify && !state.passenger && !state.goods ? 1 : 0
+  state.newGoodsYardsCore = state.newGoodsYards && !state.passenger && !state.goods ? 1 : 0
+
+  // Some layers are dimmed when other layers are visible.
+  state.passenger = state.passenger ? (state.passengerStations ? 0.22 : 1) : 0
+  state.goods = state.goods ? (state.goodsYards ? 0.22 : 1) : 0
+
+  for (const el of document.querySelectorAll('.menu > *')) {
+    const layer = el.dataset.layers.split(" ").shift()
+    el.classList[state[layer] !== 0 ?'add' : 'remove']('selected')
+  }
+  for (const el of document.querySelectorAll('.stack > *')) {
+    el.style.opacity = state[el.dataset.layer]
+  }
+}
+refresh()
+</script>
