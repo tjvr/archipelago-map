@@ -4,7 +4,7 @@
     "ol": "6.5.0"
   },
   "devDependencies": {
-    "@parcel/optimizer-cssnano": "^2.0.0-nightly.602",
+    "@parcel/optimizer-cssnano": "^2.9.3",
     "@parcel/optimizer-htmlnano": "^2.0.0-nightly.602",
     "@parcel/packager-css": "^2.0.0-nightly.602",
     "@parcel/packager-html": "^2.0.0-nightly.602",
@@ -13,10 +13,10 @@
     "@parcel/transformer-image": "^2.0.0-nightly.2224",
     "@parcel/transformer-postcss": "^2.0.0-nightly.602",
     "@parcel/transformer-posthtml": "^2.0.0-nightly.602",
-    "parcel": "^2.0.0-beta.1",
-    "parcel-reporter-static-files-copy": "^1.2.1",
-    "postcss": "^8.2.6",
-    "prettier": "^2.2.1",
+    "parcel": "^2.9.3",
+    "parcel-reporter-static-files-copy": "^1.5.0",
+    "postcss": "^8.4.24",
+    "prettier": "^2.8.8",
     "svgo": "^1.3.2"
   },
   "scripts": {
