@@ -1,5 +1,32 @@
-all: static/ground static/rails static/freight static/hills static/labels
+#all: static/ground static/rails static/freight static/hills static/labels 
+all: static/v2/combined
 .PHONY: all
+
+static/v2/combined: src/19530101_NationalMapV1.png
+	rm -rf $@/*
+	vips dzsave $< $@ \
+	  --overlap 0 \
+	  --layout google \
+	  --suffix .webp \
+	  --tile-size 256 \
+	  --background 0,0,0 \
+	  --skip-blanks 160 \
+	  --depth onetile
+src/19530101_NationalMapV1.png: src/19530101_NationalMapV1.svg
+	_INKSCAPE_GC=disable inkscape --without-gui --file=$< --export-dpi=300 --export-png=$@
+	#vips resize $< $@ 1.0
+
+#src/19530101_NationalMapV1.ppm: src/19530101_NationalMapV1.pdf
+#	pdftoppm -singlefile -r 150 $< > $@
+
+
+src/19530101_NationalMapV1.svg: src/19530101_NationalMapV1.pdf
+	# Convert that PDF page to SVG.
+	# _INKSCAPE_GC makes Inkscape work under WSL.
+	_INKSCAPE_GC=disable inkscape --without-gui --file=$< --export-plain-svg=$@
+src/19530101_NationalMapV1.opt.svg: src/19530101_NationalMapV1.svg
+	cp $< $@
+	node_modules/.bin/svgo $@
 
 static/hills: src/hillshading.png
 	rm -rf $@/*

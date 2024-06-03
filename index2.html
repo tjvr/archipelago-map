@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name=viewport content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>The Archipelago Map</title>
+    <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
+    <script src="https://unpkg.com/elm-pep"></script>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      .svg-layer {
+        position: absolute;
+      }
+      .map {
+        width: 100%;
+        height: 100%;
+      }
+      #map {
+        background: #000;
+      }
+      form {
+        position: absolute;
+        top: -1px;
+        right: -1px;
+        margin-left: 4em;
+        text-align: left;
+      }
+      label {
+        cursor: pointer;
+        line-height: 2em;
+        display: inline-block;
+        padding-right: 0.5em;
+      }
+      footer {
+        position: absolute;
+        bottom: -1px;
+        right: -1px;
+        transition: opacity 500ms linear;
+      }
+      select, input, label, footer, button {
+        font-size: 1.25rem;
+        font-family: -Apple-System, sans-serif;
+      }
+      form, footer {
+        background: rgba(0,0,0,0.8);
+        border: 1px solid #fff;
+        color: #fff;
+        font-size: 1rem;
+        padding: 0.25rem 0.5rem;
+      }
+      footer a {
+        text-decoration: none;
+        color: #0cb6f7;
+      }
+      #menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      #menu input {
+      }
+      #menu > li > label {
+        border-top: 1px solid rgba(255,255,255,0.5);
+        display: block;
+      }
+      #menu > li:first-child > label {
+        border-top: none;
+      }
+      #menu {
+        display: none;
+      }
+      #menu.visible {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <form>
+      <select id="dropdown" tabindex="1"></select>
+      <button id="toggle-menu">Layers</button>
+      <ul id="menu">
+        <li><label for="labels"><input type="checkbox" id="labels" checked /> Names</label>
+        <li><label for="freight"><input type="checkbox" id="freight" checked /> Industries</label>
+        <li><label for="rails"><input type="checkbox" id="rails" checked /> Lines</label>
+        <li><label for="hills"><input type="checkbox" id="hills" checked /> Terrain</label>
+        <li><label for="ground"><input type="checkbox" id="ground" checked /> Satellite</label>
+      </ul>
+    </form>
+    <footer>map by <a href="https://twitter.com/GarethDennis">Gareth Dennis</a>
+      • viewer by <a href="https://twitter.com/blob8108">blobby tables</a>
+      • source on <a href="https://github.com/tjvr/anengineerplays-archipelago-map">GitHub</a></footer>
+    <script src="main2.js" type="module"></script>
+  </body>
+</html>
