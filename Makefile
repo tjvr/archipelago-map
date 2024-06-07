@@ -2,18 +2,19 @@
 all: static/v2/combined
 .PHONY: all
 
-static/v2/combined: src/19530101_NationalMapV1.png
+static/v2/combined: tmp/1953mapv1.200.png
 	rm -rf $@/*
 	vips dzsave $< $@ \
 	  --overlap 0 \
 	  --layout google \
 	  --suffix .webp \
 	  --tile-size 256 \
-	  --background 0,0,0 \
 	  --skip-blanks 160 \
-	  --depth onetile
-src/19530101_NationalMapV1.png: src/19530101_NationalMapV1.svg
-	_INKSCAPE_GC=disable inkscape --without-gui --file=$< --export-dpi=300 --export-png=$@
+	  --depth onetile \
+	  --background 255,255,255,0
+
+#src/19530101_NationalMapV1.png: src/19530101_NationalMapV1.svg
+	#_INKSCAPE_GC=disable inkscape --without-gui --file=$< --export-dpi=300 --export-png=$@
 	#vips resize $< $@ 1.0
 
 #src/19530101_NationalMapV1.ppm: src/19530101_NationalMapV1.pdf

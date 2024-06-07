@@ -1,7 +1,7 @@
 {
   "name": "svg-layer",
   "dependencies": {
-    "ol": "6.5.0"
+    "ol": "9.2.4"
   },
   "devDependencies": {
     "@parcel/optimizer-cssnano": "^2.9.3",
@@ -20,7 +20,7 @@
     "svgo": "^1.3.2"
   },
   "scripts": {
-    "start": "parcel index.html crowle/index.html",
+    "start": "parcel index.html crowle/index.html index2.html",
     "build": "parcel build --public-url . index.html && parcel build --public-url . crowle/index.html --dist-dir ./dist/crowle/"
   },
   "prettier": {
