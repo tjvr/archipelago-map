@@ -1,50 +1,100 @@
-import Feature from "ol/Feature.js"
-import Layer from "ol/layer/Layer.js"
-import Point from "ol/geom/Point.js"
-import Map from "ol/Map.js"
-import View from "ol/View.js"
-import { composeCssTransform } from "ol/transform.js"
-import { Icon, Fill, Stroke, Style, Text } from "ol/style.js"
-import VectorLayer from "ol/layer/Vector.js"
-import VectorSource from "ol/source/Vector.js"
-import TileLayer from "ol/layer/Tile.js"
-import XYZ from "ol/source/XYZ.js"
-import Projection from "ol/proj/Projection.js"
-import { Modify } from "ol/interaction.js"
-import { createStringXY } from "ol/coordinate.js"
-import { defaults as defaultControls } from "ol/control.js"
-import MousePosition from "ol/control/MousePosition.js"
+// Usually, Leaflet uses lat/long as coordinates. At zoom level 0, the width of
+// a single tile represents all 360 degrees of Earth.
+//
+// For our fictional map, we instead use a flat grid 24km square. At zoom level
+// 0, the width of a single tile represents 24km.
+//
+// We don't need to invert the Y axis (unlike for some other games): our
+// coordinates already go bottom-to-top.
 
-const groundOpacity = 0.5
+const tileSize = 384
+const f = tileSize/24
+const inverseF = 1/f
+const projection = {
+	project: function (latlng) {
+		return new L.Point(latlng.lng*f, (latlng.lat - 24)*f)
+	},
 
-const projection = new Projection({
-  code: "amphitros",
-  // The map is 24 x 24 km.
-  extent: [0, 0, 24, 24],
-  units: "pixels",
+	unproject: function (point) {
+		return new L.LatLng(point.y*inverseF + 24, point.x*inverseF)
+	},
+
+	bounds: new L.Bounds([0, -tileSize], [tileSize, 0]),
+};
+
+const crs = L.extend(L.CRS.Simple, {
+  infinite: false,
+  projection,
 })
 
+// Note that at zoom level 0, the entire map will occupy 24 pixels.
+const bounds = [
+  [0, 0],
+  [24, -24576],
+]
 
-const mousePositionControl = new MousePosition({
-  coordinateFormat: createStringXY(4),
-  projection: projection,
-})
+// CRS.Simple almost does what we want, except for how it handles zoom levels.
+//
+// If we define our map bounds as 24 by 24, then at zoom level 0, our map would
+// be 24 by 24 pixels square on screen!
+// const zoomScale = 256/24
+// const crs = L.extend(L.CRS.Simple, {
+// 	scale(zoom) {
+//       return Math.pow(2, zoom)*zoomScale;
+// 	},
+// 	zoom(scale) {
+//       return Math.log(scale/zoomScale) / Math.LN2;
+// 	},
+// })
 
-function makeLayer(name) {
-  return new TileLayer({
-    source: new XYZ({
-      url: `/tiles/${name}/{z}/{y}/{x}.png`,
-      minZoom: 0,
-      maxZoom: 6,
-      //// We want transparency
-      //transition: 0,
-      wrapX: false,
-      projection,
-      zDirection: -1,
-    }),
-    //opacity: 0.4,
-  })
+const defaultZoom = 0
+const searchResultZoom = 3
+
+// The map is 24 x 24 km.
+// We render it at 256 * 1.5 * 2^6 = 24,576 pixels square.
+// TODO
+
+const yx = L.latLng
+const xy = function (x, y) {
+  // ref([x, y]);
+  if (Array.isArray(x)) {
+    return yx(x[1], x[0])
+  }
+  return yx(y, x) // When doing xy(x, y);
 }
+
+const TileLayer = L.TileLayer.extend({
+  getTileUrl: function(tilecoords) {
+    console.log(tilecoords)
+    //tilecoords.x = tilecoords.x + 4;
+    //tilecoords.y = tilecoords.y - 8;
+    //tilecoords.z = tilecoords.z + 1;
+    // This "works", but not if detectRetina is on.
+    //tilecoords.y += Math.pow(2, tilecoords.z)
+    return L.TileLayer.prototype.getTileUrl.call(this, tilecoords);
+  },
+  tileSize: 384,
+})
+
+const makeLayer = name =>
+  new TileLayer(`/tiles/${name}/{z}/{y}/{x}.png`, {
+  //new TileLayer(`/gentiles/${name}/{z}/{y}/{x}.png`, {
+
+    // Display tiles at their native resolution.
+    tileSize,
+
+    // On a "retina" device (>1 devicePixelRatio), display tiles one zoom level
+    // higher.
+    detectRetina: true,
+
+    // Do not try to fetch tiles at zoom 7+ since they don't exist.
+    // 
+    // This option interacts poorly with detectRetina; when that's in use, we
+    // have to specify a max zoom level one *lower* or we will try and fetch
+    // tiles that don't exist.
+    maxNativeZoom: L.Browser.retina ? 5 : 6,
+
+  })
 
 const layerNames = {
   topo: "Topographic",
@@ -53,97 +103,103 @@ const layerNames = {
   full: "Complete",
 }
 
-const defaultLayer = 'full'
-
 const layers = {}
-for (const key of Object.keys(layerNames)) {
-  layers[key] = makeLayer(key)
+const layerOptions = {}
+for (const [key, name] of Object.entries(layerNames)) {
+  const layer = makeLayer(key)
+  layers[key] = layer
+  layerOptions[name] = layer
 }
 
-const target = document.getElementById("map")
+const map = L.map("map", {
+  maxZoom: 6,
 
-const defaultZoom = 3
-const defaultRestoreZoom = 5
+  crs,
 
-let selectedLayer = defaultLayer
+  maxBounds: [[-24, -24], [48, 48] ],
 
-const view = new View({
-  center: [12, 12],
-  minZoom: 0,
-  zoom: defaultZoom,
-  maxZoom: 6, // display tiles at most 2x
-  enableRotation: false,
-  projection,
-})
+  // One horizontal map unit is mapped to one horizontal pixel.
+  // TODO
 
-const map = new Map({
-  controls: defaultControls().extend([mousePositionControl]),
-  target,
-  layers: [layers.full],
-  view,
-})
+  layers: [],
 
-const layerDropdown = document.getElementById("layer")
+  //controls: [
+  //  layerControl,
+  //],
+  //minZoom: 4,
+  //
+}).setView([12, 12], 1)
 
-for (const key of Object.keys(layerNames)) {
-  const option = document.createElement("option")
-  option.textContent = layerNames[key]
-  option.value = key
-  layerDropdown.appendChild(option)
-}
+const setLayer = layerKey => {
+  for (const [key, layer] of Object.entries(layers)) {
+    if (key === layerKey) {
+      map.addLayer(layer)
+    } else {
+      map.removeLayer(layer)
 
-layerDropdown.addEventListener("change", e => {
-  selectLayer(layerDropdown.value)
-  saveState()
-})
-
-const selectLayer = (layer) => {
-  selectedLayer = layer
-  map.setLayers([layers[layer]])
-  console.log(`selected ${layer}`)
-}
-
-const restoreState = () => {
-  const m = /#?\@(-?[0-9.]+),(-?[0-9.]+)(?:,([0-9.]+)z(?:,(.*))?)?$/.exec(location.hash)
-  if (!m) return false
-  const x = +m[1]
-  const y = +m[2]
-  const z = +m[3] || defaultRestoreZoom
-  const layer = m[4] || defaultLayer
-  console.log(x,y,z)
-  if (isNaN(x) || isNaN(y)) return false
-  view.setCenter([x, y])
-  view.setZoom(z)
-  selectLayer(layer)
-  layerDropdown.value = layer
-  return true
-}
-
-const saveState = () => {
-  const center = view.getCenter()
-  const zoom = view.getZoom()
-  const x = center[0]
-  const y = center[1]
-  window.history.replaceState(
-    {},
-    "",
-    `#@${x.toFixed(3)},${y.toFixed(3)},${zoom.toFixed(2)}z,${selectedLayer}`
-  )
-}
-
-if (!restoreState()) {
-  saveState()
-}
-window.addEventListener("hashchange", e => {
-  console.log('hashchange', e)
-  if (!restoreState()) {
-    saveState()
+    }
   }
+}
+setLayer('full')
+
+//const image = L.imageOverlay('/tiles/full/0/0/0.png', bounds).addTo(map)
+
+const layerControl = L.control.layers(layerOptions, {}, {
+  collapsed: false,
+})
+layerControl.addTo(map)
+
+map.attributionControl.setPrefix(
+  'mapping &copy; <a href="//x.com/GarethDennis">Gareth Dennis</a> • viewer by <a href="//blob.codes/">blobby tables</a>'
+)
+
+
+map.on("moveend", e => {
+  console.log(e)
 })
 
-map.on("moveend", saveState)
-
-map.on("postrender", () => {
-  document.querySelector("footer").style.opacity = view.getZoom() < 3 ? 1 : 0
+map.on("mousemove", e => {
 })
-window.ol = map
+
+//sample data values for populate map
+var data = [
+  { loc: xy(24, 24), title: "topright" },
+  { loc: xy(12, 12), title: "center" },
+  { loc: [0, 0], title: "origin" },
+]
+
+var markersLayer = new L.LayerGroup() //layer contain searched elements
+
+//map.addLayer(markersLayer)
+
+var controlSearch = new L.Control.Search({
+  position: "topright",
+  layer: markersLayer,
+  initial: false,
+  zoom: searchResultZoom,
+  marker: false,
+  delayType: 0,
+})
+
+controlSearch.addTo(map)
+map.removeLayer(markersLayer)
+
+////////////populate map with markers from sample data
+for (i in data) {
+  var title = data[i].title, //value searched
+    loc = data[i].loc, //position found
+    marker = new L.Marker(new L.latLng(loc), { title: title }) //se property searched
+  marker.bindPopup("title: " + title)
+  markersLayer.addLayer(marker)
+}
+
+window.addEventListener("keypress", e => {
+  switch (e.key) {
+    case "/":
+      controlSearch.expand()
+      break
+    default:
+      return
+  }
+  e.preventDefault()
+})

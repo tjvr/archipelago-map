@@ -52,15 +52,17 @@ for p in processes:
 processes = []
 for src in image_files:
     name = src.stem
-    dest = Path(f"../static/tiles/{name}")
-    dest.mkdir(parents=True, exist_ok=False)
+    dest = Path(f"tiles/{name}")
+    dest.mkdir(parents=True, exist_ok=True) #False)
     command = [
         "vips", "dzsave", src, dest,
         "--overlap", "0",
         "--layout", "google",
         "--suffix", ".png",
+        "--background", "216,248,248,1", # water
+        #"--suffix", ".webp[Q=100]",
         "--tile-size", tile_size,
-        "--skip-blanks", "160",
+        "--skip-blanks", "-1", # don't skip blanks -- TODO undo this
         "--depth", "onetile",
     ]
     print(" ".join(map(shlex.quote, map(str, command))))

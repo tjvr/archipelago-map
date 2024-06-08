@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name=viewport content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Amphitros 1953</title>
+    <link rel="stylesheet" href="/leaflet/leaflet.css">
+    <link rel="stylesheet" href="/leaflet-search/dist/leaflet-search.min.css">
     <style>
       html, body {
         height: 100%;
@@ -18,76 +20,20 @@
         width: 100%;
         height: 100%;
       }
-      #map {
-        background: white;
+      #map.leaflet-container {
+        background: #d8f8f8;
       }
-      form {
-        position: absolute;
-        top: -2px;
-        right: -2px;
-        margin-left: 4em;
-        text-align: left;
-      }
-      label {
-        cursor: pointer;
-        line-height: 2em;
-        display: inline-block;
-        padding-right: 0.5em;
-      }
-      footer {
-        position: absolute;
-        bottom: -2px;
-        right: -2px;
-        transition: opacity 500ms linear;
-      }
-      select, input, label, footer, button {
-        font-size: 1.25rem;
-        font-family: -Apple-System, sans-serif;
-      }
-      form, footer {
-        background: #fff;
-        border: 2px solid #000;
-        color: #000;
-        font-size: 1rem;
-        padding: 0.25rem 0.5rem;
-      }
-      footer a {
-        text-decoration: none;
-        color: #0cb6f7;
-      }
-      #menu {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      #menu input {
-      }
-      #menu > li > label {
-        border-top: 1px solid rgba(255,255,255,0.5);
-        display: block;
-      }
-      #menu > li:first-child > label {
-        border-top: none;
-      }
-      #menu {
-        display: none;
-      }
-      #menu.visible {
-        display: block;
+
+      /* Move the search control over to line it up. */
+      .leaflet-container .leaflet-control-search {
+        float: right;
       }
     </style>
   </head>
   <body>
     <div id="map" class="map"></div>
-    <form>
-      <select id="layer" tabindex="1">
-      </select>
-    </form>
-    <footer>map by <a href="https://twitter.com/GarethDennis">Gareth Dennis</a>
-      • viewer by <a href="https://twitter.com/blob8108">blobby tables</a>
-      • source on <a href="https://github.com/tjvr/anengineerplays-archipelago-map">GitHub</a></footer>
-
-    <script src="/openseadragon/openseadragon.js"></script>
+    <script src="/leaflet/leaflet.js"></script>
+    <script src="/leaflet-search/dist/leaflet-search.min.js"></script>
     <script src="map.js"></script>
   </body>
 </html>
