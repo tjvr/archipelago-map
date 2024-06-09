@@ -3,21 +3,50 @@ from pathlib import Path
 from pprint import pprint
 import shlex
 import subprocess
+import sys
 
 # 1 Topographic
 # 2 Railway
 # 3 Road
 # 4 Complete
 
-src_root = Path('./tmp/')
+src_root = Path('./src/')
 dest_root = Path('./tmp/')
 
 # 256px @1.5x
 tile_size = 384
 
+dry_run = '--dry-run' in sys.argv
+
+processes = []
+vector_files = []
+for src in src_root.rglob('*.pdf'):
+    dest = dest_root / src.relative_to(src_root).with_suffix('.svg')
+    vector_files.append(dest)
+
+    actions = [
+        f"file-open:{src}",
+        f"export-filename:{dest}",
+        "export-do",
+    ]
+
+    command = [
+        'inkscape',
+        '--actions',
+        "; ".join(actions),
+    ]
+    print(" ".join(map(shlex.quote, command)))
+    if not dry_run:
+        p = subprocess.Popen(command)
+        processes.append(p)
+
+for p in processes:
+    returncode = p.wait()
+    print(f"Inkscape exited {returncode}")
+
 processes = []
 image_files = []
-for src in src_root.rglob('*.svg'):
+for src in vector_files:
     #dest = dest_root / src.relative_to(src_root).with_suffix('.svg')
     #actions = [
     #    f"file-open:{src}",
@@ -25,7 +54,7 @@ for src in src_root.rglob('*.svg'):
     #    "export-do",
     #]
 
-    dest = dest_root / src.relative_to(src_root).with_suffix('.png')
+    dest = dest_root / src.relative_to(dest_root).with_suffix('.png')
     image_files.append(dest)
 
     actions = [
@@ -42,8 +71,9 @@ for src in src_root.rglob('*.svg'):
         "; ".join(actions),
     ]
     print(" ".join(map(shlex.quote, command)))
-    #p = subprocess.Popen(command)
-    #processes.append(p)
+    if not dry_run:
+        p = subprocess.Popen(command)
+        processes.append(p)
 
 for p in processes:
     returncode = p.wait()
@@ -66,8 +96,9 @@ for src in image_files:
         "--depth", "onetile",
     ]
     print(" ".join(map(shlex.quote, map(str, command))))
-    p = subprocess.Popen(map(str, command))
-    processes.append(p)
+    if not dry_run:
+        p = subprocess.Popen(map(str, command))
+        processes.append(p)
 
 for p in processes:
     returncode = p.wait()

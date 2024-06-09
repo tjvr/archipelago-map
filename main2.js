@@ -31,11 +31,11 @@ const projection = new Projection({
 const layers = {
   hills: new TileLayer({
     source: new XYZ({
-      url: "./v2/combined/{z}/{y}/{x}.webp",
+      url: "./tiles/{z}/{y}/{x}.webp",
       minZoom: 0,
       maxZoom: 6,
-      // We want transparency
-      transition: 0,
+      //// We want transparency
+      //transition: 0,
       wrapX: false,
       projection,
     }),
@@ -178,7 +178,7 @@ const view = new View({
   center: [0, 0],
   minZoom: 0,
   zoom: 2,
-  maxZoom: 10,
+  maxZoom: 7, // display tiles at most 2x
   enableRotation: false,
   projection,
 })
