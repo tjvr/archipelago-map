@@ -140,6 +140,19 @@
 
     <script src="/leaflet/leaflet.js"></script>
     <script src="/fuse/fuse.basic.js"></script>
+
+
+    <script>
+    const yx = L.latLng
+    const xy = function (x, y) {
+      // ref([x, y])
+      if (Array.isArray(x)) {
+        return yx(x[1], x[0])
+      }
+      return yx(y, x) // When doing xy(x, y)
+    }
+    </script>
+    <script src="search-index.js"></script>
     <script src="map.js"></script>
   </body>
 </html>

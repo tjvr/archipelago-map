@@ -1,5 +1,5 @@
 deploy:
-	rsync -Pvraz \
+	rsync -Pvraz --delete \
 		map \
 		leaflet/leaflet.css \
 		leaflet/leaflet.js\

@@ -170,15 +170,6 @@ posControl.addTo(map)
 
 /* Search map with autocomplete */
 
-const yx = L.latLng
-const xy = function (x, y) {
-  // ref([x, y])
-  if (Array.isArray(x)) {
-    return yx(x[1], x[0])
-  }
-  return yx(y, x) // When doing xy(x, y)
-}
-
 const searchInput = document.getElementById('search')
 const autocomplete = document.getElementById('autocomplete')
 searchInput.addEventListener('focus', updateResults)
@@ -210,13 +201,8 @@ autocomplete.style.visibility = 'hidden'
 
 let autocompleteState = null
 
-const searchPoints = [
-  {title: "Bradshaw", loc: xy(17.2470703125, 7.53515625), zoom: 4},
-  {title: "Vorioslimin", loc: xy(12.2275390625, 19.451171875), zoom: 4},
-  {title: "Shanklin", loc: xy(6.34, 8.8), zoom: 4},
-  {title: "Anapolis", loc: xy(18.08, 9.82), zoom: 4},
-  {title: "Thapste", loc: xy(18.63, 15.33), zoom: 4},
-]
+const MTEXT = 'm'
+const TEXT = 't'
 
 const reEscape = s => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 
@@ -321,15 +307,36 @@ function redrawResults() {
   }
 }
 
+function getZoom(result) {
+  if (result.zoom != null) {
+    return result.zoom
+  }
+
+  switch (result.kind) {
+    case "SettlementPrimaryCity":
+      return 4
+    case "SettlementPrimaryTown":
+      return 5
+    case "SettlementSecondaryTown":
+      return 5
+    case "SettlementSecondaryVillage":
+      return 6
+    default:
+      return 4
+  }
+}
+
 function selectResult(result) {
-  map.flyTo(result.loc, result.zoom, {
+  console.log(result)
+  const zoom = getZoom(result)
+  console.log(zoom)
+  map.flyTo(result.loc, zoom, {
     duration: 0.5,
   })
   searchInput.value = ""
   searchInput.blur()
 
   const {lng: x, lat: y} = result.loc
-  const zoom = result.zoom
   window.history.pushState(
     {},
     "",
