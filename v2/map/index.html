@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name=viewport content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Amphitros 1953</title>
+    <link rel="stylesheet" href="/leaflet/leaflet.css">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+
+        font-family: system-ui, sans-serif;
+      }
+      .svg-layer {
+        position: absolute;
+      }
+
+      body {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .leaflet-container .leaflet-control-mouseposition {
+        background-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 0 5px #bbb;
+        padding: 0 5px;
+        margin:0;
+        color: #333;
+        /*font: 11px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;*/
+        font-family: monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      #controls {
+        min-height: 3rem;
+        padding: 0.5rem 0.75rem;
+
+        display: flex;
+        flex-direction: row;
+        border-bottom: 1px solid;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      #controls label {
+        display: none;
+      }
+      #controls input, #controls select {
+        min-height: 2rem;
+      }
+
+      #map {
+        flex-grow: 1;
+      }
+
+      #gap {
+        flex-grow: 1;
+      }
+
+      h1 {
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 600;
+        margin: 0;
+        padding: 0;
+      }
+
+      #search {
+        width: 16rem;
+      }
+
+      #autocomplete, #search, #layer {
+        font-size: 1.25rem;
+        font-weight: 400;
+      }
+
+      #controls, #autocomplete {
+        background: #fff;
+        border-color: #555;
+      }
+
+      #search-wrapper {
+        position: relative;
+      }
+
+      #autocomplete {
+        position: absolute;
+        top: 2.5rem;
+        left: -0.75rem;
+        z-index: 9999;
+        margin: 0;
+        padding: 0;
+        width: 20rem;
+        border-left: 1px solid;
+        border-right: 1px solid;
+        border-bottom: 1px solid;
+      }
+      #autocomplete li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      #autocomplete li a {
+        display: block;
+        margin: 0;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+      }
+      #autocomplete li a.selected {
+        background: #d8f8f8;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="controls">
+      <h1>Amphitros</h1>
+
+      <div id="layer-wrapper">
+        <label for="layer">Choose map</label>
+        <select name="layer" id="layer"></select>
+      </div>
+
+      <div id="gap"></div>
+
+      <div id="search-wrapper">
+        <label for="search">Search</label>
+        <input id="search" name="search" type="search" placeholder="Search" autocomplete="off">
+        <ul id="autocomplete"></ul>
+      </div>
+    </form>
+
+    <div id="map" class="map"></div>
+
+    <script src="/leaflet/leaflet.js"></script>
+    <script src="/fuse/fuse.basic.js"></script>
+    <script src="map.js"></script>
+  </body>
+</html>
