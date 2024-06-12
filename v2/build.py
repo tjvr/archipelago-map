@@ -18,35 +18,36 @@ tile_size = 384
 
 dry_run = '--dry-run' in sys.argv
 
-processes = []
-vector_files = []
-for src in src_root.rglob('*.pdf'):
-    dest = dest_root / src.relative_to(src_root).with_suffix('.svg')
-    vector_files.append(dest)
-
-    actions = [
-        f"file-open:{src}",
-        f"export-filename:{dest}",
-        "export-do",
-    ]
-
-    command = [
-        'inkscape',
-        '--actions',
-        "; ".join(actions),
-    ]
-    print(" ".join(map(shlex.quote, command)))
-    if not dry_run:
-        p = subprocess.Popen(command)
-        processes.append(p)
-
-for p in processes:
-    returncode = p.wait()
-    print(f"Inkscape exited {returncode}")
+#processes = []
+#vector_files = []
+#for src in src_root.rglob('*.pdf'):
+#    dest = dest_root / src.relative_to(src_root).with_suffix('.svg')
+#    vector_files.append(dest)
+#
+#    actions = [
+#        f"file-open:{src}",
+#        f"export-filename:{dest}",
+#        "export-do",
+#    ]
+#
+#    command = [
+#        'inkscape',
+#        '--actions',
+#        "; ".join(actions),
+#    ]
+#    print(" ".join(map(shlex.quote, command)))
+#    if not dry_run:
+#        p = subprocess.Popen(command)
+#        processes.append(p)
+#
+#for p in processes:
+#    returncode = p.wait()
+#    print(f"Inkscape exited {returncode}")
 
 processes = []
 image_files = []
-for src in vector_files:
+#for src in vector_files:
+for src in src_root.rglob('*.pdf'):
     #dest = dest_root / src.relative_to(src_root).with_suffix('.svg')
     #actions = [
     #    f"file-open:{src}",
@@ -54,7 +55,7 @@ for src in vector_files:
     #    "export-do",
     #]
 
-    dest = dest_root / src.relative_to(dest_root).with_suffix('.png')
+    dest = dest_root / src.relative_to(src_root).with_suffix('.png')
     image_files.append(dest)
 
     actions = [
