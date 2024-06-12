@@ -60,6 +60,9 @@ for e in msp:
         "SettlementPrimaryTown",
         "SettlementSecondaryTown",
         "SettlementSecondaryVillage",
+
+        # These are not named correctly!
+        #"RailStations",
     ):
         continue
 
@@ -82,14 +85,14 @@ for e in msp:
         text, _, _ = text.partition("\\P")
 
     text = text.replace("\\P", " ")
-    text = text.title()
 
     # Cleanup station names
     if kind == "RailStations": 
         if not text.endswith(" HALT"):
             assert text.endswith(" STA."), text
             text = text[:-len(" STA.")] + " STATION"
-        text = text.title()
+
+    text = text.title()
 
     print(f'{{"kind": "{kind}", "loc": xy({x:.3f}, {y:.3f}), "title": "{text}"}},', file=f)
 
