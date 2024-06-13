@@ -52,7 +52,7 @@ const makeLayer = name =>
 
 const layerNames = {
   '1953-full': "1953 AMA Second Series 1:10000",
-  '1953-rail': "1953 AMA Railway Gazeteer",
+  '1953-rail': "1953 AMA Railway Gazetteer",
   '1953-rail-dark': "1953 Dark railway map",
   'topo': "Geographic",
 }
